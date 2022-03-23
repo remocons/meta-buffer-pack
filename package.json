@@ -1,0 +1,39 @@
+{
+  "name": "meta-buffer-pack",
+  "version": "0.1.0",
+  "description": "Meta Buffer Pack",
+  "main": "index.js",
+  "type":"module",
+  "exports": {
+    "import": "./index.js",
+    "require": "./dist/meta-buffer-pack.cjs"
+  },
+  "browseriife": "./dist/meta-buffer-pack.min.js",
+  "browser": "./dist/meta-buffer-pack.esm.js",
+  "cjs": "./dist/meta-buffer-pack.cjs",
+  "esm": "./dist/meta-buffer-pack.mjs",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.1.0",
+    "rollup": "^2.36.2",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "keywords": ["buffer","pack"],
+  "author": {
+    "name" : "Lee Dong Eun  ",
+    "email" : "sixgen@gmail.com"
+  },
+  
+  "license": "(MIT OR Apache-2.0)",
+  "dependencies": {
+    "buffer": "^6.0.3"
+  }
+}
