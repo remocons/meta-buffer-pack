@@ -5,7 +5,7 @@ import pkg from './package.json'
 
 export default [
   {
-    input: './index.js',
+    input: './src/browser-index.js',
     output: [
       {
       file: pkg.browseriife,
@@ -28,11 +28,11 @@ export default [
     ]
   },
   {
-    input: './index.js',
+    input: './src/index.js',
     output: [
       { file: pkg.cjs, format: 'cjs' },
       { file: pkg.esm, format: 'es' }
-      ],
+      ], 
     plugins: [
       resolve(), // tells Rollup how to find date-fns in node_modules
       commonjs(), // converts date-fns to ES modules

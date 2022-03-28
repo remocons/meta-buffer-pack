@@ -1,24 +1,20 @@
 {
   "name": "meta-buffer-pack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Meta Buffer Pack",
-  "main": "index.js",
+  "main": "./src/index.js",
   "type":"module",
   "exports": {
-    "import": "./index.js",
+    "import": "./src/index.js",
     "require": "./dist/meta-buffer-pack.cjs"
   },
   "browseriife": "./dist/meta-buffer-pack.min.js",
   "browser": "./dist/meta-buffer-pack.esm.js",
   "cjs": "./dist/meta-buffer-pack.cjs",
   "esm": "./dist/meta-buffer-pack.mjs",
-  "files": [
-    "index.js",
-    "dist"
-  ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.1.0",
+    "@rollup/plugin-node-resolve": "^11.1.0", 
     "rollup": "^2.36.2",
     "rollup-plugin-terser": "^7.0.2"
   },
