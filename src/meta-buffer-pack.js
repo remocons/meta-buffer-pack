@@ -13,7 +13,7 @@ const decoder = new TextDecoder();
 return: Buffer
 */
 
-export let NB = numberBuffer;
+export const NB = numberBuffer;
 export function numberBuffer(type, initValue = 0) {
     let buffer;
     if (type === undefined || typeof type !== 'string' || typeof initValue !== 'number') {
@@ -299,10 +299,10 @@ export function unpack(binPack) {
 
 
 /* simple parser and packer */
-
 // input: any
 // return uint8Array.  
 // *point*  if input number -> output is 1 byte Uint8Array that initialized by the input number.
+export const U8 = parseUint8Array;
 export function parseUint8Array(data) {
 
     if (data == undefined) throw 'Invalid data type: Undefined'
@@ -321,16 +321,14 @@ export function parseUint8Array(data) {
     } else { // array, object 
         return encoder.encode(JSON.stringify(data))  // object(array.. )  > JSON.str > encode > unint8array
     }
-
-
 }
 
 // in:  arraybuffer,typedArray,DataView,number
 // return: unint8array
 // 1. normalize: any into Uint8array 
 // 2. return new buffer merged.
-
-export function parseValuesIntoUint8AndConcat(...dataArray) {
+export const U8pack = parseUint8ThenConcat;
+export function parseUint8ThenConcat(...dataArray) {
     try {
         let bufferSize = 0
         let offset = 0;
@@ -344,7 +342,6 @@ export function parseValuesIntoUint8AndConcat(...dataArray) {
         return buffer
     } catch (error) {
         console.log(error)
-
     }
 }
 

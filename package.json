@@ -1,6 +1,6 @@
 {
   "name": "meta-buffer-pack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Meta Buffer Pack",
   "main": "./src/index.js",
   "type":"module",
@@ -24,11 +24,11 @@
   },
   "keywords": ["buffer","pack"],
   "author": {
-    "name" : "Lee Dong Eun  ",
+    "name" : "Lee Dong Eun",
     "email" : "sixgen@gmail.com"
   },
   
-  "license": "(MIT OR Apache-2.0)",
+  "license": "MIT",
   "dependencies": {
     "buffer": "^6.0.3"
   }
