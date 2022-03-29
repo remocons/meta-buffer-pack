@@ -14,8 +14,8 @@ export default [
       sourcemap: true
     },
       {  
-      file: pkg.browser,
-      format: 'es', // 
+      file: pkg.browser,  // Use modern ES Module!
+      format: 'es', 
       name: 'MBP',
       sourcemap: true  
     }  
@@ -23,9 +23,8 @@ export default [
   ],
     plugins: [
       resolve(),
-      // resolve({ "preferBuiltins": false }), // tells Rollup how to find date-fns in node_modules
-      commonjs() // converts date-fns to ES modules
-      ,terser() // minify, but only in production 
+      commonjs() 
+      ,terser() 
     ]
   },
   {
@@ -35,9 +34,9 @@ export default [
       { file: pkg.esm, format: 'es' }
       ], 
     plugins: [
-      resolve(), // tells Rollup how to find date-fns in node_modules
-      commonjs() // converts date-fns to ES modules
-      ,terser() // minify, but only in production
+      resolve(), 
+      commonjs() 
+      ,terser() 
     ]
   }
 

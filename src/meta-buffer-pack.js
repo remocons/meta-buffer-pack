@@ -3,7 +3,7 @@ import { Buffer } from 'buffer/index.js'
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-/*  
+/*   
 @params:
 -type: It's string keyword that indicate datatype.
   8, 16, 32     default:  read and write as Uint. BigEndian.
@@ -310,7 +310,7 @@ export function parseUint8Array(data) {
         return encoder.encode(data)
     } else if (typeof data === 'number') {  // number > 1 byte uint8array(number)
         return Uint8Array.from([data])
-    } else if (data instanceof ArrayBuffer ) {  // arraybuffer > wrap uint8arra(ab)
+    } else if (data instanceof ArrayBuffer ) {  // arraybuffer > wrap uint8array(ab)
         return new Uint8Array(data)
     } else if (ArrayBuffer.isView(data)) {
         if (data instanceof Uint8Array ) {  // uint8array > return same .  accept Buffer too.

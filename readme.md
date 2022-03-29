@@ -11,48 +11,144 @@ Node: CJS, ESM,  browser: IIFE, ESM.
 - NB: Number Buffer:  Typed Number => < buffer >
 
 - MB: Meta Buffer :  [ "name", "type", < buffer > ] :Array
+  - name : string : user defined variable name.
+  - type : string : declare variable data type and endian.
+  - buffer: Buffer : Uint8Array binary Data.
+  - MB function generate Meta Buffer.
 
 - MBA: Meta Buffer Arguments :  ...args => ...MB
 
-- Meta Buffer Pack:  one buffer contains [...buffer, bufferInfo ]
+- Meta Buffer Pack:  One buffer contains [...buffers, bufferInfo ]
 
 - pack() :  Merge multiple MB or MBA then return  one MBP
 
 - unpack() :  unpack MBP then return MBO.
 
-- Meta Buffer Object: { "name1": Buffer, "name2": Number ,,,}
+- MBO: Meta Buffer Object 
+  - unpack(MB Pack) =>{ "name1": Buffer, "name2": Number ,,,}
+  - unpack(MBA pack ) =>{ "args": [12,22.2 ,,,] ,,}  
+  If MBP contains MBA then unpacked MBO has 'args' and '$' properties.
 
+## Alias
+ - MBP.NB == MBP.numberBuffer
+ - MBP.MB = MBP.metaBuffer
+ - MBP.MBA = MBP.metaBufferArguments
+
+
+## Useage
+### Install
+```
+npm install meta-buffer-pack
+```
+### Import module
+- bundled module file is inside dist folder.
+```
+
+// Node ES Module
+import { MBP, Buffer } from 'meta-buffer-pack'
+
+// Node commonJS
+const { MBP } = require('meta-buffer-pack')
+
+// Browser IIFE
+1. include <script src="./lib/meta-buffer-pack.min.js"></script>
+2. use global MBP reference name. 
+3. use MBP.Buffer for Node Buffer.
+
+// Brwoser ES Module. 
+// Do not forget the file extension '.js'
+import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
 
 ```
 
-import { MBP } from 'meta-buffer-pack'
+-  It contains Node's Buffer. It's useful in the web browser.
+
+### MBP.pack()
+- Use function MB() to make a meta buffer. (name, type, value)
+- Use function pack( ) to merge the MB list. 
+
+```
 
 // 1. pack()
-    let pack = MBP.pack(
-    MBP.MB('v1','8',123),  // uint8 (default. Unsgined, BigEndian)
+  let pack = MBP.pack(
+    MBP.MB('anyName','8',123),  // uint8 (default. Unsgined, BigEndian)
     MBP.MB('v2','i16',-31234),  //int16 ( Signed value include i)
     MBP.MB('v3','16L', 0x1234),  //Uint16 ( LittleEndian include L)
     MBP.MB('v4','32', 4200000000),   // uint32
     MBP.MB('v5','n', 123.456),   // Normal Number as string buffer (include float)
     MBP.MB('vStr','abcde'),  // buffer string
-    MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omitted info data.
+    MBP.MB('#omitInfo','bufferConatinsThisData')  
+    // if name includes # then omitted from info object. *reduce pack size.
   )
-
-
-// 2. unpack:  buffer -> object
+```
+### MBP.unpack( bufferPack ) : Object
+- unpack() function receive buffer Pack.
+- return object {}
+- This object has property names that defined by meta buffer.
+```
 
     let obj = MBP.unpack( pack )
 
-    //obj
+    //obj key and values.
     {
-      "v1": 123,
+      "anyName": 123,
       "v2": -31234,
       "v3": 4660,
       "v4": 4200000000,
       "v5": 123.456,
       "vStr": "abcde"
     }
+    
+    //  obj.anyName  -> 123
 
 
 
 ```
+## MBA example.
+Convert multiple parameters into MB list. 
+
+```
+
+function packFunctionParams( ...args){
+  return MBP.pack(  MBP.MBA(...args) )
+}
+
+let mbaPack = packFunctionParams( 'hi', 2332, 22.2, [1, 2, 3], { 'hi': 'yeh' }, true )
+
+
+// Now mbaPack is Buffer which contains function arguments.
+<Buffer 68 69 32 33 33 32 32 32 2e 32 5b 31 2c 32 2c 33 5d 7b 22 68 69 22 3a 22 79 65 68 22 7d 01 06 5b 5b 30 2c 22 53 22 2c 30 2c 32 5d 2c 5b 31 2c 22 4e 22 ... >
+
+
+let mbaObj = MBP.unpack( mbaPack )
+
+// use reserved property names:  args ( or $ )
+
+// mbaObj.args is an array of parameter values.
+
+ [ 'hi', 2332, 22.2, [ 1, 2, 3 ], { hi: 'yeh' }, true ]
+
+// use args prop with index number
+ mbaObj.args[0] => hi
+ mbaObj.$[1] => 2332  // $ is alias name.  
+ mbaObj.args[2] => 22.2
+ mbaObj.args[3] => [1,2,3]
+ mbaObj.args[4] => { hi: 'yeh' }
+ mbaObj.args[5] => true
+
+```
+### Tip. Meta Buffer Name
+- You can define 'VariableName' of MB.  
+- The name will be MBO.property name.
+- *MBA has no variable name.  use reserved $ or args prop.
+```
+let mb = MBP.MB('devId','32', 4200000000 )
+let mbo = MBP.unpack( MBP.pack(mb) )
+ mbo.devId  === 4200000000  
+ > true
+```
+
+
+
+
+
