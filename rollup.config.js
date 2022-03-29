@@ -5,7 +5,7 @@ import pkg from './package.json'
 
 export default [
   {
-    input: './src/browser-index.js',
+    input: './src/index.js',
     output: [
       {
       file: pkg.browseriife,
@@ -18,13 +18,14 @@ export default [
       format: 'es', // 
       name: 'MBP',
       sourcemap: true  
-    }
+    }  
   
   ],
     plugins: [
-      resolve(), // tells Rollup how to find date-fns in node_modules
-      commonjs(), // converts date-fns to ES modules
-      terser() // minify, but only in production
+      resolve(),
+      // resolve({ "preferBuiltins": false }), // tells Rollup how to find date-fns in node_modules
+      commonjs() // converts date-fns to ES modules
+      ,terser() // minify, but only in production 
     ]
   },
   {
@@ -35,8 +36,8 @@ export default [
       ], 
     plugins: [
       resolve(), // tells Rollup how to find date-fns in node_modules
-      commonjs(), // converts date-fns to ES modules
-      terser() // minify, but only in production
+      commonjs() // converts date-fns to ES modules
+      ,terser() // minify, but only in production
     ]
   }
 
