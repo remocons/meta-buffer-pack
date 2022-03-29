@@ -8,11 +8,11 @@ Node: CJS, ESM,  browser: IIFE, ESM.
 
 ## Teminology
 
-- Number Buffer:  Typed Number => < buffer >
+- NB: Number Buffer:  Typed Number => < buffer >
 
-- Meta Buffer :  [ "name", "type", < buffer > ] :Array
+- MB: Meta Buffer :  [ "name", "type", < buffer > ] :Array
 
-- Meta Buffer Arguments :  ...args => ...MB
+- MBA: Meta Buffer Arguments :  ...args => ...MB
 
 - Meta Buffer Pack:  one buffer contains [...buffer, bufferInfo ]
 
@@ -30,12 +30,12 @@ import { MBP } from 'meta-buffer-pack'
 // 1. pack()
     let pack = MBP.pack(
     MBP.MB('v1','8',123),  // uint8 (default. Unsgined, BigEndian)
-    MBP.MB('v2','i16',-31234),  //int16 (Unsigned. include i)
-    MBP.MB('v3','16L', 0x1234),  //Uint16 (LittleEndian include L)
+    MBP.MB('v2','i16',-31234),  //int16 ( Signed value include i)
+    MBP.MB('v3','16L', 0x1234),  //Uint16 ( LittleEndian include L)
     MBP.MB('v4','32', 4200000000),   // uint32
     MBP.MB('v5','n', 123.456),   // Normal Number as string buffer (include float)
     MBP.MB('vStr','abcde'),  // buffer string
-    MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omit info data.
+    MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omitted info data.
   )
 
 
@@ -52,7 +52,6 @@ import { MBP } from 'meta-buffer-pack'
       "v5": 123.456,
       "vStr": "abcde"
     }
-
 
 
 
