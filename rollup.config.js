@@ -7,12 +7,6 @@ export default [
   {
     input: './src/index.js',
     output: [
-      {
-      file: pkg.browseriife,
-      format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-      name: 'MBP',
-      sourcemap: true
-    },
       {  
       file: pkg.browser,  // Use modern ES Module!
       format: 'es', 
@@ -24,7 +18,24 @@ export default [
     plugins: [
       resolve(),
       commonjs() 
-      ,terser() 
+      // ,terser() 
+    ] 
+  },
+  {
+    input: './src/index-iife.js',
+    output: [
+      {
+      file: pkg.browseriife,
+      format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+      name: 'MBP',
+      sourcemap: true
+    }  
+  
+  ],
+    plugins: [
+      resolve(),
+      commonjs() 
+      // ,terser() 
     ]
   },
   {
@@ -36,7 +47,7 @@ export default [
     plugins: [
       resolve(), 
       commonjs() 
-      ,terser() 
+      // ,terser() 
     ]
   }
 

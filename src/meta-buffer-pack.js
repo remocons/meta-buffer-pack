@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer/index.js'
-
+export { Buffer }
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -155,6 +155,7 @@ export function metaBufferArguments(...args) {
 
 
 export function readTypedBuffer(type, buffer, offset, length) {
+    
     // prn('RTB type',type)
     if (type.includes('8')) {
         if (type.includes('I')) {
@@ -310,14 +311,10 @@ export function parseUint8Array(data) {
         return encoder.encode(data)
     } else if (typeof data === 'number') {  // number > 1 byte uint8array(number)
         return Uint8Array.from([data])
-    } else if (data instanceof ArrayBuffer ) {  // arraybuffer > wrap uint8array(ab)
+    } else if (data instanceof ArrayBuffer) {  // arraybuffer > wrap uint8array(ab)
         return new Uint8Array(data)
-    } else if (ArrayBuffer.isView(data)) {
-        if (data instanceof Uint8Array ) {  // uint8array > return same .  accept Buffer too.
-            return data
-        } else {
-            return new Uint8Array(data.buffer, data.byteOffset, data.byteLength)  // DataView, TypedArray >  uint8array( use offset, length )
-        }
+    } else if (ArrayBuffer.isView(data)) {   // accept Buffer too.
+        return new Uint8Array(data.buffer, data.byteOffset, data.byteLength)  // DataView, TypedArray >  uint8array( use offset, length )
     } else { // array, object 
         return encoder.encode(JSON.stringify(data))  // object(array.. )  > JSON.str > encode > unint8array
     }
@@ -350,6 +347,15 @@ export function hex(buffer) {
     return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
 } // arraybuffer를 hex문자열로
 
+
+export function equal(buf1, buf2) {
+    if (buf1.byteLength != buf2.byteLength) return false
+    for (let i = 0; i < buf1.byteLength; i++) {
+        if (buf1[i] != buf2[i]) return false
+    }
+
+    return true
+}
 
 function prn(...data) {
     console.log(...data)
