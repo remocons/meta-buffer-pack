@@ -12,7 +12,7 @@ const decoder = new TextDecoder();
 -value:  number to store the buffer
 return: Buffer
 */
-
+ 
 export const NB = numberBuffer;
 export function numberBuffer(type, initValue = 0) {
     let buffer;

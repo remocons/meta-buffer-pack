@@ -18,7 +18,7 @@ export default [
     plugins: [
       resolve(),
       commonjs() 
-      // ,terser() 
+      ,terser() 
     ] 
   },
   {
@@ -35,7 +35,7 @@ export default [
     plugins: [
       resolve(),
       commonjs() 
-      // ,terser() 
+      ,terser() 
     ]
   },
   {
@@ -47,7 +47,7 @@ export default [
     plugins: [
       resolve(), 
       commonjs() 
-      // ,terser() 
+      ,terser() 
     ]
   }
 

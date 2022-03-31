@@ -31,7 +31,6 @@ describe('U8', function () {
 });
 
 
-// assert.ok( MBP.equal(  MBP.NB('8', 222) ,  Buffer.from([222])   )  ); 
 
 describe('NB : Numbered Buffer', function () {
 
@@ -49,21 +48,15 @@ describe('NB : Numbered Buffer', function () {
 
   });
 
-  describe('when type string', function () {
+  describe('when type include:', function () {
 
-    // const int16 = Buffer.alloc(2).writeInt16BE(  32000  );
-    // const uint16 = Buffer.alloc(2).writeUInt16BE( 32000  );
-    // // hex( 'int16', int16)
-    // hex( 'uint16', uint16)
-    // hex( 'NB16i', MBP.NB('16i', -1 ))
-
-    it('include "i" or "I"', function () { 
+    it(' "i" or "I" then Signed', function () { 
       const n = -1000;
       const NB16i = MBP.NB('16i', n  )
       const int16be = Buffer.alloc(2);
-      int16be.writeInt16BE(  n ,0 );
-      hex('NB16i', NB16i)
-      hex('int16be', int16be)
+      int16be.writeInt16BE(  n );
+      // hex('NB16i', NB16i)
+      // hex('int16be', int16be)
       assert.ok(  MBP.equal(  NB16i, int16be  ) ); 
     });
 
@@ -73,9 +66,6 @@ describe('NB : Numbered Buffer', function () {
 
 });
 
-// console.log( MBP.NB('16', 0x1234))
-// console.log( MBP.NB('16L', 0x1234))
-// console.log( Buffer.from('1234','hex') )
 
   function prn(tag, v) {
     console.log(v)
