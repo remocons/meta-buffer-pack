@@ -1,7 +1,7 @@
 # Meta Buffer Pack
 
 
-`Meta Buffer Pack` is a typed binary data packaging tool.
+`Meta Buffer Pack` is a typed binary data packaging helper for node.js and modern web browser.
 
 ## features
 - pack & unpack

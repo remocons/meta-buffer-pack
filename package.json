@@ -1,6 +1,6 @@
 {
   "name": "meta-buffer-pack",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Meta Buffer Pack",
   "main": "./src/index.js",
   "type": "module",
@@ -28,6 +28,7 @@
     "buffer",
     "pack"
   ],
+  "homepage": "https://github.com/make-robot/meta-buffer-pack",
   "repository": {
     "type": "git",
     "url": "https://github.com/make-robot/meta-buffer-pack.git"
