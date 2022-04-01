@@ -11,7 +11,7 @@
 - It contains [ Node's Buffer](https://www.npmjs.com/package/buffer)  It's useful in the web browser.
 
 ## Support 
-- Node: CJS, ESM,  
+- Node: CJS (require), ESM (import),  
 - browser: IIFE, ESM.
 
 
@@ -60,9 +60,10 @@ import { MBP, Buffer } from 'meta-buffer-pack'
 const { MBP } = require('meta-buffer-pack')
 
 // Browser IIFE
-1. include <script src="./lib/meta-buffer-pack.min.js"></script>
-2. use global MBP reference name. 
-3. use MBP.Buffer for Node Buffer.
+// 1. include 
+<script src="./path/meta-buffer-pack.min.js"></script>
+// 2. use global MBP reference name. 
+// 3. use MBP.Buffer for Node Buffer.
 
 // Browser ES Module. 
 // Do not forget the file extension '.js'
