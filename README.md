@@ -178,10 +178,16 @@ let mbo = MBP.unpack( MBP.pack(mb) )
  mbo.devId  === 4200000000  
  > true
 ```
+### node & browser example
 
-### online demo page
-[ESMoudle](https://make-robot.github.io/meta-buffer-pack/example/index-esm.html)
-[IIFE](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
+please check example folder
+
+### online browser demo page
+You can simply evaluate some test code right now by online demo page.  
+- [Modern ES Moudle](https://make-robot.github.io/meta-buffer-pack/example/index-esm.html)
+- [or IIFE ](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
+
+
 
 ### license
 [MIT](LICENSE)
