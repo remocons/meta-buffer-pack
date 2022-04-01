@@ -28,6 +28,10 @@
     "buffer",
     "pack"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/make-robot/meta-buffer-pack.git"
+  },
   "author": {
     "name": "Lee Dong Eun",
     "email": "sixgen@gmail.com"
