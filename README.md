@@ -1,14 +1,14 @@
 # Meta Buffer Pack
 
 
-`Meta Buffer Pack` is a typed binary data packaging helper for node.js and modern web browser.
+`Meta Buffer Pack` : a binary data packaging helper.
 
 ## features
 - pack & unpack
-- NB: read and write typed value buffer.
-- MBP: meta buffer info container.
+- NB: write typed value buffer.
+- MBP: meta buffer container.
 - MBA: building buffer from parameters.
-- It contains [ Node's Buffer](https://www.npmjs.com/package/buffer)  It's useful in the web browser.
+- It contains [ Node's Buffer](https://www.npmjs.com/package/buffer).  It's useful in the web browser.
 
 ## Support 
 - Node: CJS (require), ESM (import),  
@@ -44,7 +44,7 @@
  - MBP.MBA = MBP.metaBufferArguments
 
 
-## Useage
+## Usage
 ### Install
 ```js
 npm i meta-buffer-pack
@@ -95,12 +95,16 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
 
     MBP.MB('#omitInfo','bufferConatinsThisData')  
     // if name includes # then omitted from info object. *reduce pack size.
+
+    //now pack is buffer.
   )
 ```
 ### MBP.unpack( bufferPack ) : Object
+
 - unpack() function receive buffer Pack.
 - return object {}
 - This object has property names that defined by meta buffer.
+
 ```js
 
     let obj = MBP.unpack( pack )
@@ -175,7 +179,10 @@ let mbo = MBP.unpack( MBP.pack(mb) )
  > true
 ```
 
+### online demo page
+[ESMoudle](https://make-robot.github.io/meta-buffer-pack/example/index-esm.html)
+[IIFE](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
 
-
+### license
 [MIT](LICENSE)
 
