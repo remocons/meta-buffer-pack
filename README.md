@@ -182,13 +182,13 @@ let mbo = MBP.unpack( MBP.pack(mb) )
 
 please check example/ folder. There are commonJS and ES Module example code.
 
-### online browser demo
+### online demo
 You can simply evaluate some test code right now by online demo page.  
 - [Modern ES Module demo link](https://make-robot.github.io/meta-buffer-pack/example/index-esm.html)
-- [or IIFE demo link](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
+- [IIFE demo link](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
 
 
-
+ 
 ### license
 [MIT](LICENSE) 
 
