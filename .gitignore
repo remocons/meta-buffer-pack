@@ -5,3 +5,4 @@ node_modules/
 .vscode/settings.json
 package-lock.json
 sh/
+package-lock.json
