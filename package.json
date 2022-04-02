@@ -22,8 +22,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "mocha",
-    "cpdocs": "./sh/cpdocs.sh"
+    "test": "mocha"
   },
   "keywords": [
     "buffer",

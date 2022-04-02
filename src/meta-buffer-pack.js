@@ -1,10 +1,10 @@
 import { Buffer } from 'buffer/index.js'
-export { Buffer }
-const encoder = new TextEncoder();
+export { Buffer }  
+const encoder = new TextEncoder(); 
 const decoder = new TextDecoder();
-
-/*   
-@params:
+ 
+/*     
+@params: 
 -type: It's string keyword that indicate datatype.
   8, 16, 32     default:  read and write as Uint. BigEndian.
   i8, i16,      includes 'I' then read and write as Int.
