@@ -1,13 +1,13 @@
 import { Buffer } from 'buffer/index.js'
-export { Buffer }  
+export { Buffer }  //for iife reference MBP.Buffer
 const encoder = new TextEncoder(); 
 const decoder = new TextDecoder();
- 
+
 /*     
 @params: 
 -type: It's string keyword that indicate datatype.
-  8, 16, 32     default:  read and write as Uint. BigEndian.
-  i8, i16,      includes 'I' then read and write as Int.
+  8, 16, 32     default:  read and write as Unsigned. BigEndian.
+  i8, i16,      includes 'I' then read and write as Signed value.
   16L , i16l    includes 'L  then read and write as LittleEndian.
 -value:  number to store the buffer
 return: Buffer
@@ -137,7 +137,7 @@ export function metaBufferArguments(...args) {
     let i = 0;
     let mba = args.map(
         data => {
-            let argsIndex = i++;  // index number becom metabuffer's name.
+            let argsIndex = i++;  // index number become metabuffer's name.
             if (typeof data === 'number') {
                 // * JS's primitive Number stored as string. 
                 return MB(argsIndex, 'N', data)
@@ -299,12 +299,12 @@ export function unpack(binPack) {
 
 
 
-/* simple parser and packer */
 // input: any
 // return uint8Array.  
-// *point*  if input number -> output is 1 byte Uint8Array that initialized by the input number.
+// shareArrayBuffer option:    false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer. 
+
 export const U8 = parseUint8Array;
-export function parseUint8Array(data) {
+export function parseUint8Array(data , shareArrayBuffer = false) {  
 
     if (data == undefined) throw 'Invalid data type: Undefined'
     if (typeof data === 'string') { // string > encode > uint8array
@@ -312,17 +312,56 @@ export function parseUint8Array(data) {
     } else if (typeof data === 'number') {  // number > 1 byte uint8array(number)
         return Uint8Array.from([data])
     } else if (data instanceof ArrayBuffer) {  // arraybuffer > wrap uint8array(ab)
-        return new Uint8Array(data)
+        if(shareArrayBuffer){
+            return new Uint8Array(data)
+        } 
+        else {
+            let originData = new Uint8Array(data) 
+            let dataCopy = new Uint8Array( data.byteLength )
+            dataCopy.set( originData )
+            return dataCopy
+        }
     } else if (ArrayBuffer.isView(data)) {   // accept Buffer too.
-        return new Uint8Array(data.buffer, data.byteOffset, data.byteLength)  // DataView, TypedArray >  uint8array( use offset, length )
+        if( shareArrayBuffer){
+            return new Uint8Array(data.buffer, data.byteOffset, data.byteLength)  // DataView, TypedArray >  uint8array( use offset, length )
+        }else{
+            // typedarry 의 모든 버퍼를  새로운 uint8로 복제.
+            let originData = new Uint8Array(data.buffer, data.byteOffset, data.byteLength) 
+            let dataCopy = new Uint8Array( data.byteLength)
+            dataCopy.set( originData  ) 
+            return dataCopy
+        }
     } else { // array, object 
         return encoder.encode(JSON.stringify(data))  // object(array.. )  > JSON.str > encode > unint8array
     }
 }
 
-// in:  arraybuffer,typedArray,DataView,number
-// return: unint8array
-// 1. normalize: any into Uint8array 
+export const B8 = parseBuffer
+export function parseBuffer( data, shareArrayBuffer = false ){
+    const u8 = parseUint8Array( data, shareArrayBuffer)
+    return Buffer.from( u8 )
+}
+
+export const B8pack = parseBufferThenConcat;
+export function parseBufferThenConcat( ...dataArray ){
+    try {
+        let bufferSize = 0
+        let offset = 0;
+        let buffers = dataArray.map(data => parseBuffer(data))
+        buffers.forEach(buf => { bufferSize += buf.byteLength })
+        let buffer = Buffer.alloc(bufferSize)
+        buffers.forEach(buf => { 
+            buffer.set(buf, offset)
+            offset += buf.byteLength
+        })
+        return buffer
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+// 1. normalize: Uint8array list 
 // 2. return new buffer merged.
 export const U8pack = parseUint8ThenConcat;
 export function parseUint8ThenConcat(...dataArray) {
@@ -345,7 +384,7 @@ export function parseUint8ThenConcat(...dataArray) {
 
 export function hex(buffer) {
     return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
-} // arraybuffer를 hex문자열로
+} 
 
 
 export function equal(buf1, buf2) {

@@ -2,33 +2,6 @@ import assert from 'assert/strict';
 import { MBP, Buffer } from '../src/index.js'
 
 
-describe('U8', function () {
-
-  describe('for number', function () {
-
-    it('should return Uint8Array', function () {
-      assert.ok(  MBP.U8(1) instanceof Uint8Array ) 
-    });
-
-    it('should return one byte length Uint8Array', function () {
-      assert.ok(  MBP.U8(1).byteLength === 1 ) 
-    });
-
-  });
-
-  describe('for string', function () {
-
-    it('should return UTF8 encoded Uint8Array UTF8 for string', function () {
-      const str = 'hello 안녕하슈'
-      const encodedStr = new TextEncoder().encode( str )
-      assert.ok( MBP.equal(  MBP.U8( str ) , encodedStr ) );
-    });
-
-
-  });
-
-
-});
 
 
 
@@ -55,10 +28,22 @@ describe('NB : Numbered Buffer', function () {
       const NB16i = MBP.NB('16i', n  )
       const int16be = Buffer.alloc(2);
       int16be.writeInt16BE(  n );
-      // hex('NB16i', NB16i)
-      // hex('int16be', int16be)
       assert.ok(  MBP.equal(  NB16i, int16be  ) ); 
     });
+
+
+    it(' "l" or "L" then LittleEndian', function () { 
+      const n = 0x1234;
+      const NB16L = MBP.NB('16L', n  )
+      assert.ok(  MBP.equal(  NB16L, Buffer.from( '3412' , 'hex')  ) ); 
+    });
+
+    it('defaut is UnSigned BigEndian.', function () { 
+      const n = 0x1234;
+      const NB16 = MBP.NB('16', n  )
+      assert.ok(  MBP.equal(  NB16, Buffer.from( '1234' , 'hex')  ) ); 
+    });
+
 
   });
 
