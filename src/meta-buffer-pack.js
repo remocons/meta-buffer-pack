@@ -66,7 +66,6 @@ export function numberBuffer(type, initValue = 0) {
 
 
 /*
-
 @name: title name( always string)
 
 @typeOfData:  
@@ -78,8 +77,7 @@ export function numberBuffer(type, initValue = 0) {
 -number for buffer with initValue
 -empty for buffer and string data.
 
-@return  Meta Buffer:  ['name', 'type', buffer] : Array 
-
+@return  Meta Buffer:  ['name', 'type', <buffer>:Buffer] : Array 
 
 // use case
 // typed number
@@ -96,8 +94,6 @@ MB('bufferTitle', buffer )
 // MB( 'title', byteSize, initvalue )  
 MB( 'buf32', 32, 0xff )  
 
-
-buffer type : Uint8Array or Buffer
 */
 
 export const MB = metaBuffer
@@ -112,16 +108,21 @@ export function metaBuffer(name, typeOrData, initValue) {
         bufferType = typeOrData.toUpperCase()  //use explicit type name
         buffer = numberBuffer(typeOrData, initValue) // notice.  two categories.  n: number string.  8, 16, 32: typed number.  
     } else if (typeof typeOrData === 'string' && initValue === undefined) { //  string buffer
-        buffer = encoder.encode(typeOrData)
+        buffer = Buffer.from(typeOrData)
         bufferType = 'S';
-    } else if (typeOrData instanceof Uint8Array && initValue === undefined) {  // buffer 
-        buffer = typeOrData
+    } else if (typeOrData instanceof Uint8Array && initValue === undefined) {  // buffer | Uint8Array 
+        // Buffer.from:  Copies the passed buffer data onto a new Buffer instance.
+        // typecasting Uint8Array to Buffer.
+        buffer = ( typeOrData instanceof Buffer ) ? typeOrData : Buffer.from( typeOrData )
     } else if (typeOrData instanceof ArrayBuffer && initValue === undefined) { // arrayBuffer
-        buffer = new Uint8Array(typeOrData)
+        // Notice. 
+        // 1. using typedarray is recomended. arraybuffer should check byteOffset & byteLength
+        // 2. Buffer will share the same allocated memory 
+        buffer = Buffer.from(typeOrData)
     } else if (ArrayBuffer.isView(typeOrData)) {    // typedarray buffer
-        buffer = new Uint8Array(typeOrData.buffer, typeOrData.byteOffset, typeOrData.byteLength)
+        buffer = Buffer.from(typeOrData.buffer, typeOrData.byteOffset, typeOrData.byteLength)
     } else if (typeof typeOrData === 'object' && initValue === undefined) {  //   object. like array. stringify
-        buffer = encoder.encode(JSON.stringify(typeOrData))
+        buffer = Buffer.from(JSON.stringify(typeOrData))
         bufferType = 'O'
     } else if (typeof typeOrData === 'boolean' && initValue === undefined) {  //   object. like array. stringify
         let v = typeOrData ? 1 : 0;
