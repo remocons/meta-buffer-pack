@@ -3,13 +3,22 @@ export { Buffer }  //for iife reference MBP.Buffer
 const encoder = new TextEncoder(); 
 const decoder = new TextDecoder();
 
-/*     
+/* NB( type:String , number:Number) : Buffer
 @params: 
 -type: It's string keyword that indicate datatype.
-  8, 16, 32     default:  read and write as Unsigned. BigEndian.
-  i8, i16,      includes 'I' then read and write as Signed value.
-  16L , i16l    includes 'L  then read and write as LittleEndian.
--value:  number to store the buffer
+  8, 16, 32 : use number for typedNumber bit size 
+
+  default:  read and write as Unsigned BigEndian.
+  include i or I for Signed number.
+  include l or L for LittleEndian.
+
+  examples
+  32  : 32bits unsigend number (uint32)
+  i16 : 16bits signed number (int16)     
+  16L : 16bits unsigend number little endian. 
+
+-value:  number to store
+
 return: Buffer
 */
  
@@ -57,41 +66,38 @@ export function numberBuffer(type, initValue = 0) {
 
 
 /*
-@name:  name of the buffer.  
-  packer and unpacker use the name.
-@type:
-  8, 16, 32     default:  read and write as Uint. BigEndian.
-  i8, i16,      includes 'I' then read and write as Int.
-  16L , i16l    includes 'L  then read and write as LittleEndian.
-@data:
-  number : new buffer will be initilized with the value.
-  buffer without type : use the buffer
-  number without type : new buffer alloc with the size
 
-  return  ['name', data:Buffer , 'type']
-*/
+@name: title name( always string)
 
-/* 
- get buffer Object with initial value & meta info( name, data type, endian , length )
- 
-input:   name, type, initValue 
-return:  return ['name',buffer, type ]  
+@typeOfData:  
+-type string for TypedNumber
+-string for textbuffer (without initValue)
+-number for buffer size with initValue
 
-ex. new buffer 4bytes with name.
-  MB('bufname', 4)
+@initValue:
+-number for buffer with initValue
+-empty for buffer and string data.
 
-ex. 
-  MB('strBuffer', 'buffer store this text' )
+@return  Meta Buffer:  ['name', 'type', buffer] : Array 
 
-ex.
-  MB('uid', '16', 0x12EF )   => name: uid, type: uint16array, bigendian, init value 0x1234.   
-  return ['uid', <Buffer 12 EF > , '16' ] 
 
-ex.
-  let buf = Buffer.alloc(8)
-  MB('bufname', buf )  => name: 'bufname'   8byte buffer. 
-  return ['bufname', <Buffer 00 00 00 00 00 00 00 00 > ,'b' ] 
+// use case
+// typed number
+MB('numberTitle','16i',-30000) 
 
+// string buffer
+MB('greeting', 'hello world' )
+
+
+// buffer , arraybuffer or TypedArray
+MB('bufferTitle', buffer )
+
+// new buffer with init value(0~255)  and byteSize.
+// MB( 'title', byteSize, initvalue )  
+MB( 'buf32', 32, 0xff )  
+
+
+buffer type : Uint8Array or Buffer
 */
 
 export const MB = metaBuffer
@@ -105,14 +111,14 @@ export function metaBuffer(name, typeOrData, initValue) {
     } else if (typeof typeOrData === 'string' && typeof initValue === 'number') { // number with type.
         bufferType = typeOrData.toUpperCase()  //use explicit type name
         buffer = numberBuffer(typeOrData, initValue) // notice.  two categories.  n: number string.  8, 16, 32: typed number.  
-    } else if (typeof typeOrData === 'string' && initValue === undefined) { //  string
+    } else if (typeof typeOrData === 'string' && initValue === undefined) { //  string buffer
         buffer = encoder.encode(typeOrData)
         bufferType = 'S';
     } else if (typeOrData instanceof Uint8Array && initValue === undefined) {  // buffer 
         buffer = typeOrData
-    } else if (typeOrData instanceof ArrayBuffer && initValue === undefined) {
+    } else if (typeOrData instanceof ArrayBuffer && initValue === undefined) { // arrayBuffer
         buffer = new Uint8Array(typeOrData)
-    } else if (ArrayBuffer.isView(typeOrData)) {
+    } else if (ArrayBuffer.isView(typeOrData)) {    // typedarray buffer
         buffer = new Uint8Array(typeOrData.buffer, typeOrData.byteOffset, typeOrData.byteLength)
     } else if (typeof typeOrData === 'object' && initValue === undefined) {  //   object. like array. stringify
         buffer = encoder.encode(JSON.stringify(typeOrData))
@@ -299,10 +305,19 @@ export function unpack(binPack) {
 
 
 
-// input: any
-// return uint8Array.  
-// shareArrayBuffer option:    false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer. 
 
+/*
+@input: any
+@shareArrayBuffer option:    false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer. 
+@return uint8Array.  
+
+// use case
+U8('str')     // string
+U8( number )  // number is initvalue range 0~255.  return one byte. 
+U8( buffer )  // buffer, typedArray or arrayBuffer 
+U8( object )  // array ,object 
+
+*/
 export const U8 = parseUint8Array;
 export function parseUint8Array(data , shareArrayBuffer = false) {  
 
@@ -325,7 +340,7 @@ export function parseUint8Array(data , shareArrayBuffer = false) {
         if( shareArrayBuffer){
             return new Uint8Array(data.buffer, data.byteOffset, data.byteLength)  // DataView, TypedArray >  uint8array( use offset, length )
         }else{
-            // typedarry 의 모든 버퍼를  새로운 uint8로 복제.
+            // new memory to protect origin arraybuffer.
             let originData = new Uint8Array(data.buffer, data.byteOffset, data.byteLength) 
             let dataCopy = new Uint8Array( data.byteLength)
             dataCopy.set( originData  ) 

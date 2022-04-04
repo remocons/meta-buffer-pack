@@ -38,12 +38,41 @@ describe('MB : Meta Buffer', function () {
         assert.ok(MBP.MB('anyStringName', new Uint16Array(len))[2].byteLength === Uint16Array.BYTES_PER_ELEMENT * len)
         assert.ok(MBP.MB('bufferName', new Uint32Array(len))[2].byteLength === Uint32Array.BYTES_PER_ELEMENT * len)
       });
-
     });
 
   });
 
-  // assert.ok(  MBP.U8( new Uint8Array(len) ).byteLength === Uint8Array.BYTES_PER_ELEMENT * len  ) 
+
+  describe('for arrayBuffer => MB( title,  arrayBuffer ) ', function () {
+    const title = 'title'
+    const buffer = new Uint8Array(12)
+    const arraybuffer = buffer.buffer;
+
+    let mb = MBP.MB(title, arraybuffer)
+    describe('should return mb items.', function () {
+
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title);
+      });
+      it('mb[1] === "B" ', function () {
+        assert.equal(mb[1], 'B');
+      });
+      it('mb[2] === Uint8Array(arrayBuffer) ', function () {
+        assert.ok(MBP.equal(mb[2],  new Uint8Array(arraybuffer) ));
+      });
+
+    });
+
+    describe('for TypedArray.arraybuffer  should return', function () {
+      it('mb[2].byteLength == TypedArray.BYTES_PER_ELEMENT * itemLength', function () {
+        const len = 3
+        assert.ok(MBP.MB('bufferTitle', new Uint8Array(len).buffer )[2].byteLength === Uint8Array.BYTES_PER_ELEMENT * len)
+        assert.ok(MBP.MB('anyStringName', new Uint16Array(len).buffer )[2].byteLength === Uint16Array.BYTES_PER_ELEMENT * len)
+        assert.ok(MBP.MB('bufferName', new Uint32Array(len).buffer )[2].byteLength === Uint32Array.BYTES_PER_ELEMENT * len)
+      });
+    });
+
+  });
 
 
 
@@ -116,6 +145,7 @@ describe('MB : Meta Buffer', function () {
     });
 
   });
+
 
 
 
