@@ -4,44 +4,15 @@
 `Meta Buffer Pack` : a binary data packaging helper.
 
 ## features
-- pack & unpack
-- NB: write typed value buffer.
-- MBP: meta buffer container.
-- MBA: building buffer from parameters.
+- pack : multiple meta-buffers into one buffer.
+- unpack : parse meta-buffer-pack buffer into one Object(MBO).
+- MBA: building buffer from (function) parameters.
 - It contains [ Node's Buffer](https://www.npmjs.com/package/buffer).  It's useful in the web browser.
 
 ## Support 
 - Node: CJS (require), ESM (import),  
 - browser: IIFE, ESM.
 
-
-## Teminology
-
-- `NB`: Number Buffer:  Typed Number => < buffer >
-
-- `MB`: Meta Buffer :  [ "name", "type", < buffer > ] :Array
-  - name : string : user defined variable name.
-  - type : string : declare variable data type and endian.
-  - buffer: Buffer : Uint8Array binary Data.
-  - MB function generate Meta Buffer.
-
-- `MBA`: Meta Buffer Arguments :  ...args => ...MB
-
-- Meta Buffer Pack:  One buffer contains [...buffers, bufferInfo ]
-
-- `pack` :  Merge multiple MB or MBA then return  one MBP
-
-- `unpack` :  unpack MBP then return MBO.
-
-- `MBO`: Meta Buffer Object 
-  - unpack(MB Pack) =>{ "name1": Buffer, "name2": Number ,,,}
-  - unpack(MBA pack ) =>{ "args": [12,22.2 ,,,] ,,}  
-  If MBP contains MBA then unpacked MBO has 'args' and '$' properties.
-
-## Alias Name
- - MBP.NB == MBP.numberBuffer
- - MBP.MB = MBP.metaBuffer
- - MBP.MBA = MBP.metaBufferArguments
 
 
 ## Usage
@@ -60,8 +31,7 @@ import { MBP, Buffer } from 'meta-buffer-pack'
 const { MBP } = require('meta-buffer-pack')
 
 // Browser IIFE
-// 1. include 
-<script src="./path/meta-buffer-pack.min.js"></script>
+// 1. include  <script src="./path/meta-buffer-pack.min.js"></script>
 // 2. use global MBP reference name. 
 // 3. use MBP.Buffer for Node Buffer.
 
@@ -108,6 +78,13 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
 ```js
 
     let obj = MBP.unpack( pack )
+
+    // unpack check.
+    if( obj ){
+      // success  return Object {}
+    }else{
+      // fail return undefined.
+    }
 
     //obj key and values.
     {
@@ -181,6 +158,38 @@ let mbo = MBP.unpack( MBP.pack(mb) )
 ### node & browser example
 
 please check example/ folder. There are commonJS and ES Module example code.
+
+
+
+## Teminology
+
+- `NB`: Number Buffer:  Typed Number => < buffer >
+
+- `MB`: Meta Buffer :  [ "name", "type", < buffer > ] :Array
+  - name : string : user defined variable name.
+  - type : string : declare variable data type and endian.
+  - buffer: Buffer : Uint8Array binary Data.
+  - MB function generate Meta Buffer.
+
+- `MBA`: Meta Buffer Arguments :  ...args => ...MB
+
+- Meta Buffer Pack:  One buffer contains [...buffers, bufferInfo ]
+
+- `pack` :  Merge multiple MB or MBA then return  one MBP
+
+- `unpack` :  unpack MBP then return MBO.
+
+- `MBO`: Meta Buffer Object 
+  - unpack(MB Pack) =>{ "name1": Buffer, "name2": Number ,,,}
+  - unpack(MBA pack ) =>{ "args": [12,22.2 ,,,] ,,}  
+  If MBP contains MBA then unpacked MBO has 'args' and '$' properties.
+
+## Alias Name
+ - MBP.NB == MBP.numberBuffer
+ - MBP.MB = MBP.metaBuffer
+ - MBP.MBA = MBP.metaBufferArguments
+
+
 
 ### online demo
 You can simply evaluate some test code right now by online demo page.  
