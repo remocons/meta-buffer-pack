@@ -271,6 +271,9 @@ export function pack(...args) {
     return buffer
 }
 
+
+// return object when success.
+// return undefined when fail.
 export function unpack(binPack) {
     let buffer = Buffer.from(binPack)
     let infoSize = buffer.readUInt16BE(buffer.byteLength - 2)
@@ -278,26 +281,32 @@ export function unpack(binPack) {
     let infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
     
     let decoded = decoder.decode(infoEncoded)
-    let infoArr = JSON.parse(decoded)
-    let binObj = {}
-    infoArr.forEach(bufPack => {
-        let [name, type, offset, length] = bufPack
-        binObj[name] = readTypedBuffer(type, buffer, offset, length)
-    })
-
-    // set args with values
-    if (binObj.$) {
-        let argLen = binObj.$;
-        let args = []
-        for (let n = 0; n < argLen; n++) {
-            args.push(binObj[n])
+    try {
+        let infoArr = JSON.parse(decoded)
+        let binObj = {}
+        infoArr.forEach(bufPack => {
+            let [name, type, offset, length] = bufPack
+            binObj[name] = readTypedBuffer(type, buffer, offset, length)
+        })
+    
+        // set args with values
+        if (binObj.$) {
+            let argLen = binObj.$;
+            let args = []
+            for (let n = 0; n < argLen; n++) {
+                args.push(binObj[n])
+            }
+            binObj.args = args
+            binObj.$ = binObj.args  // same  .args or .$
         }
-        binObj.args = args
-        binObj.$ = binObj.args  // same  .args or .$
+        // prn('binObj',binObj)
+        return binObj  // Object {}
+            
+    } catch (error) {
+        
     }
-    // prn('binObj',binObj)
-    return binObj  // Object {}
 
+    
 
 }
 
