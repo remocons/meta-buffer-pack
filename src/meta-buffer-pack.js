@@ -276,30 +276,28 @@ export function unpack(binPack) {
     let infoSize = buffer.readUInt16BE(buffer.byteLength - 2)
     let infoFrom = buffer.byteLength - infoSize - 2;
     let infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
-    try {
-        let decoded = decoder.decode(infoEncoded)
-        let infoArr = JSON.parse(decoded)
-        let binObj = {}
-        infoArr.forEach(bufPack => {
-            let [name, type, offset, length] = bufPack
-            binObj[name] = readTypedBuffer(type, buffer, offset, length)
-        })
+    
+    let decoded = decoder.decode(infoEncoded)
+    let infoArr = JSON.parse(decoded)
+    let binObj = {}
+    infoArr.forEach(bufPack => {
+        let [name, type, offset, length] = bufPack
+        binObj[name] = readTypedBuffer(type, buffer, offset, length)
+    })
 
-        // set args with values
-        if (binObj.$) {
-            let argLen = binObj.$;
-            let args = []
-            for (let n = 0; n < argLen; n++) {
-                args.push(binObj[n])
-            }
-            binObj.args = args
-            binObj.$ = binObj.args  // same  .args or .$
+    // set args with values
+    if (binObj.$) {
+        let argLen = binObj.$;
+        let args = []
+        for (let n = 0; n < argLen; n++) {
+            args.push(binObj[n])
         }
-        // prn('binObj',binObj)
-        return binObj
-    } catch (error) {
-        console.log('unpack: invalid data.', error)
+        binObj.args = args
+        binObj.$ = binObj.args  // same  .args or .$
     }
+    // prn('binObj',binObj)
+    return binObj  // Object {}
+
 
 }
 
