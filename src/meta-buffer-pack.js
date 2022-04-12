@@ -100,10 +100,22 @@ export const MB = metaBuffer
 export function metaBuffer(name, typeOrData, initValue) {
     let buffer;
     let bufferType = 'B';
-    if (typeof typeOrData === 'number') {  // this number is buffer size. not value.
-        buffer = Buffer.alloc(typeOrData)
-        if (initValue) buffer.fill(initValue)
-        bufferType = 'B'
+    if (typeof typeOrData === 'number') {  
+        if (initValue){
+            // case 1. MB(name, number, initValue)  
+            // when ( number with initValue )
+            // typeOrData is buffer size.  fill with initValue        
+            buffer = Buffer.alloc(typeOrData)
+            buffer.fill(initValue)
+            bufferType = 'B'
+        }else{
+            // case 2.  MB(name, number )  
+            // when ( only number, no initValue)  
+            // typeOrData is value of Number.  stored as string.    
+            buffer = Buffer.from(String(typeOrData))
+            bufferType = 'N'
+        }
+
     } else if (typeof typeOrData === 'string' && typeof initValue === 'number') { // number with type.
         bufferType = typeOrData.toUpperCase()  //use explicit type name
         buffer = numberBuffer(typeOrData, initValue) // notice.  two categories.  n: number string.  8, 16, 32: typed number.  

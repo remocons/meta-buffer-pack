@@ -51,11 +51,18 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
   let buf1 = new Uint8Array(32);
 
   let pack = MBP.pack(
+    // typed number. strict byteLength & Endian.
     MBP.MB('anyName','8',123),  // uint8 (default. Unsgined, BigEndian)
     MBP.MB('v2','i16',-31234),  //int16 ( Signed value include i)
     MBP.MB('v3','16L', 0x1234),  //Uint16 ( LittleEndian include L)
     MBP.MB('v4','32', 4200000000),   // uint32
-    MBP.MB('v5','n', 123.456),   // Normal Number as string buffer (include float)
+
+    // Nnumbers
+    MBP.MB('v5','n', 123.456),   // explicitly define Number as string buffer (include float number.)
+    MBP.MB('numberString', 123.456),   // MB('name', number) same with above. wihtout 3rd parameter. it's stored number as string.
+
+    // define size of Uint8Array with initValue(0~255).
+    MBP.MB('sizeBufferWithInitValue', 4,1),   // MB('name',size, init) 
     MBP.MB('vStr','abcde'),  // buffer string (UTF8 encoded)
 
     // raw buffers. with name. No 'type' parameter.    
@@ -65,9 +72,9 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
 
     MBP.MB('#omitInfo','bufferConatinsThisData')  
     // if name includes # then omitted from info object. *reduce pack size.
-
-    //now pack is buffer.
   )
+    //now pack is buffer.
+
 ```
 ### MBP.unpack( bufferPack ) : Object
 
@@ -93,6 +100,11 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
       "v3": 4660,
       "v4": 4200000000,
       "v5": 123.456,
+      "numberString": 123.456,
+      "sizeBufferWithInitValue": {
+        "type": "Buffer",
+        "data": [1,1,1,1]
+      },
       "vStr": "abcde",
       "buf1": {
         "type": "Buffer",

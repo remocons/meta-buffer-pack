@@ -146,7 +146,34 @@ describe('MB : Meta Buffer', function () {
 
   });
 
+  describe('for Number without initvalue => MB( title, number ) ', function () {
+    const title = 'variableName'
+    const num = 255
+    let mb = MBP.MB(title, num)
+    console.log('mb', mb )
 
+    describe('should return', function () {
+
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title);
+      });
+      it('mb[1] === "N"', function () {
+        assert.equal(mb[1], 'N');
+      });
+
+      it('mb[2].byteLength === numberStringEncoded.byteLength ', function () {
+        const numberStringEncoded = new TextEncoder().encode( num )
+        assert.equal(mb[2].byteLength, numberStringEncoded.byteLength );
+      });
+
+      it('mb[2] === numberStringEncoded ', function () {
+        const numberStringEncoded = new TextEncoder().encode( num )
+        assert.ok(MBP.equal(mb[2], numberStringEncoded ));
+      });
+
+    });
+
+  });
 
 
 });
