@@ -22,8 +22,8 @@ npm i meta-buffer-pack
 ```
 ### Import module
 - bundled module file is inside dist folder.
-```js
 
+```js
 // Node ES Module
 import { MBP } from 'meta-buffer-pack'
 
@@ -31,9 +31,11 @@ import { MBP } from 'meta-buffer-pack'
 const { MBP } = require('meta-buffer-pack')
 
 // Browser IIFE
-// 1. include  <script src="./path/meta-buffer-pack.min.js"></script>
+// 1. include  
+<script src="./path/meta-buffer-pack.min.js"></script>
 // 2. use global MBP reference name. 
 // 3. use MBP.Buffer for Node Buffer.
+const Buffer = MBP.Buffer
 
 // Browser ES Module. 
 // Do not forget the file extension '.js'
