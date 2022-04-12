@@ -25,7 +25,7 @@ npm i meta-buffer-pack
 ```js
 
 // Node ES Module
-import { MBP, Buffer } from 'meta-buffer-pack'
+import { MBP } from 'meta-buffer-pack'
 
 // Node commonJS
 const { MBP } = require('meta-buffer-pack')
@@ -204,7 +204,7 @@ please check example/ folder. There are commonJS and ES Module example code.
 
 
 ### online demo
-You can simply evaluate some test code right now by online demo page.  
+You can simply evaluate some test code by online page.  
 - [Modern ES Module demo link](https://make-robot.github.io/meta-buffer-pack/example/index-esm.html)
 - [IIFE demo link](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
 
