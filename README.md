@@ -211,7 +211,5 @@ You can simply evaluate some test code by online page.
 - [IIFE demo link](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
 
 
- 
-### license
-[MIT](LICENSE) 
-
+### License
+- [MIT](LICENSE)  이동은 ( Lee Dong Eun ) sixgen@gmail.com 
