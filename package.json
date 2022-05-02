@@ -37,7 +37,7 @@
     "name": "Lee Dong Eun",
     "email": "sixgen@gmail.com"
   },
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
     "buffer": "^6.0.3"
   }

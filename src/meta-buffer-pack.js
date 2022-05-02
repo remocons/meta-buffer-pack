@@ -7,6 +7,7 @@ const decoder = new TextDecoder()
 @params:
 -type: It's string keyword that indicate datatype.
   8, 16, 32 : use number for typedNumber bit size
+  f         : float
 
   default:  read and write as Unsigned BigEndian.
   include i or I for Signed number.
@@ -23,7 +24,7 @@ return: Buffer
 */
 
 export const NB = numberBuffer
-export function numberBuffer (type, initValue = 0) {
+export function numberBuffer(type, initValue = 0) {
   let buffer
   if (type === undefined || typeof type !== 'string' || typeof initValue !== 'number') {
     throw TypeError('invlaid init variablie type name. ')
@@ -52,6 +53,13 @@ export function numberBuffer (type, initValue = 0) {
       if (type.includes('L')) buffer.writeUint32LE(initValue)
       else buffer.writeUint32BE(initValue)
     }
+  } else if (type.includes('F')) {
+    buffer = Buffer.alloc(4)
+    if (type.includes('L')) {
+        buffer.writeFloatLE(initValue)
+    } else {
+        buffer.writeFloatBE(initValue)
+    }  
   } else if (type.includes('N')) { // number as string
     buffer = Buffer.from(String(initValue))
   } else {
@@ -94,21 +102,15 @@ MB( 'buf32', 32, 0xff )
 */
 
 export const MB = metaBuffer
-export function metaBuffer (name, typeOrData, initValue) {
+export function metaBuffer(name, typeOrData, initValue) {
   let buffer
   let bufferType = 'B'
   if (typeof typeOrData === 'number') {
     if (initValue) {
-      // case 1. MB(name, number, initValue)
-      // when ( number with initValue )
-      // typeOrData is buffer size.  fill with initValue
       buffer = Buffer.alloc(typeOrData)
       buffer.fill(initValue)
       bufferType = 'B'
     } else {
-      // case 2.  MB(name, number )
-      // when ( only number, no initValue)
-      // typeOrData is value of Number.  stored as string.
       buffer = Buffer.from(String(typeOrData))
       bufferType = 'N'
     }
@@ -147,7 +149,7 @@ export function metaBuffer (name, typeOrData, initValue) {
 }
 
 export const MBA = metaBufferArguments
-export function metaBufferArguments (...args) {
+export function metaBufferArguments(...args) {
   let i = 0
   const mba = args.map(
     data => {
@@ -166,7 +168,7 @@ export function metaBufferArguments (...args) {
   return mba
 }
 
-export function readTypedBuffer (type, buffer, offset, length) {
+export function readTypedBuffer(type, buffer, offset, length) {
   // prn('RTB type',type)
   if (type.includes('8')) {
     if (type.includes('I')) {
@@ -202,6 +204,12 @@ export function readTypedBuffer (type, buffer, offset, length) {
         return buffer.readUint32BE(offset)
       }
     }
+  } else if (type.includes('F')) {
+    if (type.includes('L')) {
+        return buffer.readFloatLE(offset)
+    } else {
+        return buffer.readFloatBE(offset)
+    }
   } else if (type === 'B') { // buffer
     return buffer.slice(offset, offset + length)
   } else if (type === 'S') { // string or arguments
@@ -225,7 +233,7 @@ export function readTypedBuffer (type, buffer, offset, length) {
   }
 }
 
-function flatSubArray (args) {
+function flatSubArray(args) {
   // prn('args',args)
   let subArr = []
   const mainArr = args.filter(item => {
@@ -235,7 +243,7 @@ function flatSubArray (args) {
   return mainArr.concat(subArr)
 }
 
-export function pack (...args) {
+export function pack(...args) {
   const bufArr = flatSubArray(args)
   let size = 0
   const info = []
@@ -283,7 +291,7 @@ export function pack (...args) {
 
 // return object when success.
 // return undefined when fail.
-export function unpack (binPack) {
+export function unpack(binPack) {
   try {
     const buffer = Buffer.from(binPack)
     const infoSize = buffer.readUInt16BE(buffer.byteLength - 2)
@@ -327,7 +335,7 @@ U8( object )  // array ,object
 
 */
 export const U8 = parseUint8Array
-export function parseUint8Array (data, shareArrayBuffer = false) {
+export function parseUint8Array(data, shareArrayBuffer = false) {
   if (data === undefined) throw TypeError('Invalid data type: Undefined')
   if (typeof data === 'string') { // string > encode > uint8array
     return encoder.encode(data)
@@ -358,13 +366,13 @@ export function parseUint8Array (data, shareArrayBuffer = false) {
 }
 
 export const B8 = parseBuffer
-export function parseBuffer (data, shareArrayBuffer = false) {
+export function parseBuffer(data, shareArrayBuffer = false) {
   const u8 = parseUint8Array(data, shareArrayBuffer)
   return Buffer.from(u8)
 }
 
 export const B8pack = parseBufferThenConcat
-export function parseBufferThenConcat (...dataArray) {
+export function parseBufferThenConcat(...dataArray) {
   try {
     let bufferSize = 0
     let offset = 0
@@ -384,7 +392,7 @@ export function parseBufferThenConcat (...dataArray) {
 // 1. normalize: Uint8array list
 // 2. return new buffer merged.
 export const U8pack = parseUint8ThenConcat
-export function parseUint8ThenConcat (...dataArray) {
+export function parseUint8ThenConcat(...dataArray) {
   try {
     let bufferSize = 0
     let offset = 0
@@ -401,11 +409,11 @@ export function parseUint8ThenConcat (...dataArray) {
   }
 }
 
-export function hex (buffer) {
+export function hex(buffer) {
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
 }
 
-export function equal (buf1, buf2) {
+export function equal(buf1, buf2) {
   if (buf1.byteLength !== buf2.byteLength) return false
   for (let i = 0; i < buf1.byteLength; i++) {
     if (buf1[i] !== buf2[i]) return false

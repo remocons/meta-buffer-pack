@@ -30,10 +30,10 @@
     MBP.MB('v2','i16',-31234),  //int16
     MBP.MB('v3','16L', 0x1234),  //Uint16 LittleEndian
     MBP.MB('v4','32', 4200000000),   // uint32
+    MBP.MB('pi','f', 3.141592),   // float as 4bytes buffer
     MBP.MB('v5','n', 123.456),   // float as number string
     MBP.MB('vStr','abcde'),  // buffer string
-    MBP.MB('#absenseInfo','bufferConatinsThisData')  // if name includes # then omit info data.
-  )
+    MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omit info data.  )
 
   // hex view
     let hex = MBP.hex( pack )

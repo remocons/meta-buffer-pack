@@ -35,4 +35,19 @@ describe('NB : Numbered Buffer', function () {
       assert.ok(MBP.equal(NB16, Buffer.from('1234', 'hex')))
     })
   })
+
+  describe('when type is float:', function () {
+    it('should return 4 byte buffer', function () {
+      assert.ok(MBP.NB('f', 222.1234).byteLength === 4);
+    });
+
+    it('BE', function () {
+      assert.ok(MBP.equal(MBP.NB('f', 3.141592), Buffer.from([0x40, 0x49, 0x0f, 0xd8])));
+    });
+
+    it('LE', function () {
+      assert.ok(MBP.equal(MBP.NB('fl', 3.141592), Buffer.from([0xd8, 0x0f, 0x49, 0x40])));
+    });
+  });
+
 })

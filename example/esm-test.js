@@ -30,6 +30,8 @@ function test() {
   prn(MB('Int16LE -10', 'i16L', -10))
   prn(MB('uint32be', '32', 0x0102))
   prn(MB('uint32le', '32l', 0x0102))
+  prn(MB('floatNumber BE', 'f', 3.141592))
+  prn(MB('floatNumber LE', 'fl', 3.141592))
 
   // new buffers with size
   prn(MB('raw bytes', 8))

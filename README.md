@@ -58,9 +58,10 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
     MBP.MB('v2','i16',-31234),  //int16 ( Signed value include i)
     MBP.MB('v3','16L', 0x1234),  //Uint16 ( LittleEndian include L)
     MBP.MB('v4','32', 4200000000),   // uint32
+    MBP.MB('pi','f', 3.141592),   // float as 4bytes buffer
 
     // Nnumbers
-    MBP.MB('v5','n', 123.456),   // explicitly define Number as string buffer (include float number.)
+    MBP.MB('v5','n', 123.456),   //  Number as string buffer (include float number.)
     MBP.MB('numberString', 123.456),   // MB('name', number) same with above. wihtout 3rd parameter. it's stored number as string.
 
     // define size of Uint8Array with initValue(0~255).
@@ -101,6 +102,7 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
       "v2": -31234,
       "v3": 4660,
       "v4": 4200000000,
+      "pi": 3.141592025756836,
       "v5": 123.456,
       "numberString": 123.456,
       "sizeBufferWithInitValue": {
@@ -121,7 +123,7 @@ import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
         "data": [ 1, 2, 3 ]
     }
     
-    //  obj.anyName  -> 123
+    console.log( obj.anyName ) // 123
 
 
 
@@ -159,19 +161,54 @@ let mbaObj = MBP.unpack( mbaPack )
  mbaObj.args[5] => true
 
 ```
-### Tip. Meta Buffer Name
-- You can define 'VariableName' of MB.  
-- The name will be MBO.property name.
-- *MBA has no variable name.  use reserved $ or args prop.
+### Property name of MB and MBA.
+- MB: You can define 'VariableName' of MB.  
+  - The name will be MBO.property name.
+- MBA: can't define variable name. 
+  - You can use reserved property name with index number: 
+  - use `$` or `args` ( array of MBA values)
+  - It will use index number (same order of MBA parameters).
+  - ex:  `args`[0], `args`[1] , `args`[n]
+  - ex:  `$`[0], `$`[1] , `$`[n]  `$` is alias of `args`.
+
 ```js
+// MB property
 let mb = MBP.MB('devId','32', 4200000000 )
 let mbo = MBP.unpack( MBP.pack(mb) )
- mbo.devId  === 4200000000  
- > true
-```
-### node & browser example
+ console.log( mbo.devId  === 4200000000 ) // true
 
-please check example/ folder. There are commonJS and ES Module example code.
+// MBA argument
+  let mbao = MBP.unpack( MBP.pack( MBP.MBA( 'hi', 2332, 22.2 ) ))
+ console.log( mbao.args[2] ) // 22.2   [2] => third argument.
+ console.log( mbao.$[2] ) // 22.2  equal.
+
+```
+
+### pack() MB and MBA together.
+You can make a buffer package with MB and MBA together.
+- multiple MB available.
+- one MBA at one pack(). 
+  - reson: MBA use index number as property name.
+  - multiple MBA will lose information. 
+```js
+
+let mixed = MBP.pack( 
+    // one or multiple MB supported.
+    MBP.MB('greeting','hello'),  
+    MBP.MB('coffee','mocha'),      
+    MBP.MBA('a1','a2',3)  // only one MBA at one pack. 
+    ) 
+let mboMix = MBP.unpack( mixed)
+
+// MB property
+console.log( mboMix.greeting ) //  "hello"
+console.log( mboMix.coffee ) //  "mocha
+
+//MBA array
+console.log( mboMix.args ) // [  "a1", "a2", 3 ]
+console.log( mboMix.args[1] ) // "a2"
+
+```
 
 
 
@@ -204,6 +241,9 @@ please check example/ folder. There are commonJS and ES Module example code.
  - MBP.MBA = MBP.metaBufferArguments
 
 
+### node & browser example
+please check example/ folder. There are commonJS and ES Module example code.
+
 
 ### online demo
 You can simply evaluate some test code by online page.  
@@ -211,5 +251,5 @@ You can simply evaluate some test code by online page.
 - [IIFE demo link](https://make-robot.github.io/meta-buffer-pack/example/index-iife.html)
 
 
-### License
-- [MIT](LICENSE)  이동은 ( Lee Dong Eun ) sixgen@gmail.com 
+### license
+[ISC](LICENSE) 이 동 은 Lee Dong Eun <sixgen@gmail.com>

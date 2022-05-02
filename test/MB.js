@@ -102,6 +102,44 @@ describe('MB : Meta Buffer', function () {
     })
   })
 
+
+  describe('for Float Typed Number => MB( title, type , number ) ', function () {
+
+    describe('should return', function () {
+      const title = "floatBE"
+      const number = 3.141592
+      let mb = MBP.MB( title , 'f', number )
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title);
+      });
+      it('mb[1] === "F"  upperCase() ', function () {
+        assert.equal(mb[1], 'F');
+      });
+      it('mb[2] === buffer BE ', function () {
+        assert.ok(MBP.equal(mb[2], Buffer.from([0x40,0x49,0x0f,0xd8 ]) ));
+      });
+    });
+
+    describe('should return', function () {
+      const title = "floatLE"
+      const number = 3.141592
+      let mb = MBP.MB( title , 'fl', number )
+
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title);
+      });
+      it('mb[1] === "FL"  upperCase() ', function () {
+        assert.equal(mb[1], 'FL');
+      });
+      it('mb[2] === buffer LE ', function () {
+        assert.ok(MBP.equal(mb[2], Buffer.from([0xd8,0x0f,0x49,0x40])));
+      });
+
+    });
+
+  });
+
+  
   describe('for size and initvalue => MB( title, size , initvalue ) ', function () {
     const title = 'variableName'
     const size = 4
