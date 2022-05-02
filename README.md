@@ -6,7 +6,7 @@
 ## features
 - pack : multiple meta-buffers into one buffer.
 - unpack : parse meta-buffer-pack buffer into one Object(MBO).
-- MBA: building buffer from (function) parameters.
+- MBA: bundle function arguments as a buffer.
 - It contains [ Node's Buffer](https://www.npmjs.com/package/buffer).  It's useful in the web browser.
 
 ## Support 
