@@ -252,4 +252,4 @@ You can simply evaluate some test code by online page.
 
 
 ### license
-[ISC](LICENSE) 이 동 은 Lee Dong Eun <sixgen@gmail.com>
+[ISC](LICENSE) Dongeun Lee 이동은 <sixgen@gmail.com>
