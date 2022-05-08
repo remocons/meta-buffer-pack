@@ -30,10 +30,10 @@
     "버퍼",
     "serialize"
   ],
-  "homepage": "https://github.com/make-robot/meta-buffer-pack",
+  "homepage": "https://github.com/congtrol/meta-buffer-pack",
   "repository": {
     "type": "git",
-    "url": "https://github.com/make-robot/meta-buffer-pack.git"
+    "url": "https://github.com/congtrol/meta-buffer-pack.git"
   },
   "author": {
     "name": "Dongeun Lee",
