@@ -25,7 +25,7 @@
   <div><button id="evalBtn">EVAL</button></div>
   <textarea class='code' id="code" cols="30" rows="10" spellcheck="false">
   // pack()  multiple meta buffers => one buffer
-    let pack = MBP.pack(
+  let pack = MBP.pack(
     MBP.MB('v1','8',123),  // uint8
     MBP.MB('v2','i16',-31234),  //int16
     MBP.MB('v3','16L', 0x1234),  //Uint16 LittleEndian
@@ -34,7 +34,8 @@
     MBP.MB('v5','n', 123.456),   // float as number string
     MBP.MB('vStr','abcde'),  // buffer string
     MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omit info data.  )
-
+  )
+  
   // hex view
     let hex = MBP.hex( pack )
     prn('mbpHex', hex)
