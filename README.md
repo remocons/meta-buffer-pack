@@ -246,5 +246,11 @@ please check example/ folder. There are commonJS and ES Module example code.
 
 
 
+### online demo
+You can simply evaluate some test code by online page.  
+- [Modern ES Module demo link](https://congtrol.github.io/meta-buffer-pack/example/index-esm.html)
+- [IIFE demo link](https://congtrol.github.io/meta-buffer-pack/example/index-iife.html)
+
+
 ### license
 [ISC](LICENSE) Dongeun Lee 이동은 <sixgen@gmail.com>
