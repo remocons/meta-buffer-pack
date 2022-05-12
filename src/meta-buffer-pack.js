@@ -3,25 +3,6 @@ export { Buffer } // for iife reference MBP.Buffer
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-/* NB( type:String , number:Number) : Buffer
-@params:
--type: It's string keyword that indicate datatype.
-  8, 16, 32 : use number for typedNumber bit size
-  f         : float
-
-  default:  read and write as Unsigned BigEndian.
-  include i or I for Signed number.
-  include l or L for LittleEndian.
-
-  examples
-  32  : 32bits unsigend number (uint32)
-  i16 : 16bits signed number (int16)
-  16L : 16bits unsigend number little endian.
-
--value:  number to store
-
-return: Buffer
-*/
 
 export const NB = numberBuffer
 export function numberBuffer(type, initValue = 0) {
@@ -56,10 +37,10 @@ export function numberBuffer(type, initValue = 0) {
   } else if (type.includes('F')) {
     buffer = Buffer.alloc(4)
     if (type.includes('L')) {
-        buffer.writeFloatLE(initValue)
+      buffer.writeFloatLE(initValue)
     } else {
-        buffer.writeFloatBE(initValue)
-    }  
+      buffer.writeFloatBE(initValue)
+    }
   } else if (type.includes('N')) { // number as string
     buffer = Buffer.from(String(initValue))
   } else {
@@ -68,38 +49,6 @@ export function numberBuffer(type, initValue = 0) {
   return buffer
 }
 
-/*
-@name: title name( always string)
-
-@typeOfData:
--type string for TypedNumber
--string for textbuffer (without initValue)
--number for buffer size with initValue
-
-@initValue:
--number for buffer with initValue
--empty for buffer and string data.
-
-@return  Meta Buffer:  ['name', 'type', <buffer>:Buffer] : Array
-
-// use case
-// typed number
-MB('numberTitle','16i',-30000)
-
-// string buffer
-MB('greeting', 'hello world' )
-
-// buffer , arraybuffer or TypedArray
-MB('bufferTitle', buffer )
-
-// new buffer with init value(0~255)  and byteSize.
-// MB( 'title', byteSize, initvalue )
-MB( 'buf32', 32, 0xff )
-
-// number as string encoded buffer.
-// MB('name','N',1234)
-// MB('name', 1234 )  // same above.
-*/
 
 export const MB = metaBuffer
 export function metaBuffer(name, typeOrData, initValue) {
@@ -125,10 +74,7 @@ export function metaBuffer(name, typeOrData, initValue) {
     // typecasting Uint8Array to Buffer.
     buffer = (typeOrData instanceof Buffer) ? typeOrData : Buffer.from(typeOrData)
   } else if (typeOrData instanceof ArrayBuffer && initValue === undefined) { // arrayBuffer
-    // Notice.
-    // 1. Using typedArray is recommended.
-    // 2. arraybuffer should check byteOffset & byteLength
-    // 3. Buffer will share the same allocated memory
+    // Notice. typedArray is recommended instead of arrayBuffer
     buffer = Buffer.from(typeOrData)
   } else if (ArrayBuffer.isView(typeOrData)) { // typedarray buffer
     buffer = Buffer.from(typeOrData.buffer, typeOrData.byteOffset, typeOrData.byteLength)
@@ -140,7 +86,7 @@ export function metaBuffer(name, typeOrData, initValue) {
     buffer = Buffer.from([v])
     bufferType = '!'
   } else {
-    // prn('invalid meta buffer data.', name, typeOrData, initValue)
+    throw TypeError('invalid meta buffer type')
   }
 
   if (typeof name === 'string' && name.includes('#')) name = '' //
@@ -153,7 +99,8 @@ export function metaBufferArguments(...args) {
   let i = 0
   const mba = args.map(
     data => {
-      const argsIndex = i++ // index number become metabuffer's name.
+      const argsIndex = i++
+      // tip. MBA use index number as metabuffer's property name.
       if (typeof data === 'number') {
         // * JS's primitive Number stored as string.
         return MB(argsIndex, 'N', data)
@@ -163,69 +110,103 @@ export function metaBufferArguments(...args) {
       }
     })
 
-  // add parameter length.
+  // add parameter length. limit 255.
   mba.push(MB('$', '8', mba.length))
   return mba
 }
 
-export function readTypedBuffer(type, buffer, offset, length) {
-  // prn('RTB type',type)
+export function parseTypeName(type) {
+  type = type.toUpperCase()
+
   if (type.includes('8')) {
     if (type.includes('I')) {
-      return buffer.readInt8(offset)
+      return 'int8'
     } else {
-      return buffer.readUint8(offset)
+      return 'uint8'
     }
   } else if (type.includes('16')) {
     if (type.includes('I')) {
       if (type.includes('L')) {
-        return buffer.readInt16LE(offset)
+        return 'int16_le'
       } else {
-        return buffer.readInt16BE(offset)
+        return 'int16_be'
       }
     } else {
       if (type.includes('L')) {
-        return buffer.readUint16LE(offset)
+        return 'uint16_le'
       } else {
-        return buffer.readUint16BE(offset)
+        return 'uint16_be'
       }
     }
   } else if (type.includes('32')) {
     if (type.includes('I')) {
       if (type.includes('L')) {
-        return buffer.readInt32LE(offset)
+        return 'int32_le'
       } else {
-        return buffer.readInt32BE(offset)
+        return 'int32_be'
       }
     } else {
       if (type.includes('L')) {
-        return buffer.readUint32LE(offset)
+        return 'uint32_le'
       } else {
-        return buffer.readUint32BE(offset)
+        return 'uint32_be'
       }
     }
   } else if (type.includes('F')) {
     if (type.includes('L')) {
-        return buffer.readFloatLE(offset)
+      return 'float_le'
     } else {
-        return buffer.readFloatBE(offset)
+      return 'float_be'
     }
-  } else if (type === 'B') { // buffer
-    return buffer.slice(offset, offset + length)
+  } else if (type === 'B') {
+    return 'buffer'
   } else if (type === 'S') { // string or arguments
+    return 'string'
+  } else if (type === 'N') { // number encoded as string
+    return 'number'
+  } else if (type === 'O') { // object encoded string
+    return 'object'
+  } else if (type === '!') { // boolean  1:true 0:false
+    return 'boolean'
+  } else {
+    throw TypeError('invalid data type')
+  }
+
+}
+
+export function readTypedBuffer(simpleType, buffer, offset, length) {
+
+  const type = parseTypeName(simpleType)
+
+  if (type == 'int8') return buffer.readInt8(offset)
+  else if (type === 'uint8') return buffer.readUint8(offset)
+  else if (type === 'int16_le') return buffer.readInt16LE(offset)
+  else if (type === 'int16_be') return buffer.readInt16BE(offset)
+  else if (type === 'uint16_le') return buffer.readUint16LE(offset)
+  else if (type === 'uint16_be') return buffer.readUint16BE(offset)
+  else if (type === 'int32_le') return buffer.readInt32LE(offset)
+  else if (type === 'int32_be') return buffer.readInt32BE(offset)
+  else if (type === 'uint32_le') return buffer.readUint32LE(offset)
+  else if (type === 'uint32_be') return buffer.readUint32BE(offset)
+  else if (type === 'float_le') return buffer.readFloatLE(offset)
+  else if (type === 'float_be') return buffer.readFloatBE(offset)
+
+  else if (type === 'buffer') {
+    return buffer.slice(offset, offset + length)
+  } else if (type === 'string') {
     const strBuffer = buffer.slice(offset, offset + length)
     return decoder.decode(strBuffer)
-  } else if (type === 'N') { // number encoded as string
+  } else if (type === 'number') {
     const strNumber = buffer.slice(offset, offset + length)
     return Number(decoder.decode(strNumber))
-  } else if (type === 'O') { // object encoded string
+  } else if (type === 'object') {
     const objEncoded = buffer.slice(offset, offset + length)
     try {
       return JSON.parse(decoder.decode(objEncoded))
     } catch (error) {
       console.log('err. obj parse')
     }
-  } else if (type === '!') { // boolean  1:true 0:false
+  } else if (type === 'boolean') {
     const v = buffer.readInt8(offset)
     return v === 1
   } else {
@@ -234,7 +215,6 @@ export function readTypedBuffer(type, buffer, offset, length) {
 }
 
 function flatSubArray(args) {
-  // prn('args',args)
   let subArr = []
   const mainArr = args.filter(item => {
     if (Array.isArray(item[0])) subArr = subArr.concat(item)
@@ -289,37 +269,128 @@ export function pack(...args) {
   }
 }
 
-// return object when success.
-// return undefined when fail.
-export function unpack(binPack) {
+
+export function getRawBuffer( binPack ) {
+  const rawBufferSize = getRawBufferSize( binPack)
+  return binPack.subarray(0,rawBufferSize)
+}
+
+// Meta buffer pack
+// include TAIL(two bytes) size info at the end if it has JSON info.
+// if it has not JSON JSON info then TAIL(two bytes) is ommited.
+export const TAIL_LEN = 2
+
+export function getRawBufferSize(binPack) {
+  if (getInfoSize(binPack) === 0) {
+    return binPack.byteLength
+  } else {
+    return binPack.byteLength - getInfoSize(binPack) - TAIL_LEN
+  }
+
+}
+
+/*
+  success: return infoObject 
+  fail: undefiend 
+*/
+export function getBufferInfo(binPack) {
+  const infoSize = readTAIL(binPack)
+  if (infoSize === 0) return
+  return parseInfo(binPack, infoSize)
+}
+
+// # internal use
+function parseInfo(binPack, infoSize) {
   try {
-    const buffer = Buffer.from(binPack)
-    const infoSize = buffer.readUInt16BE(buffer.byteLength - 2)
+    const buffer = new Uint8Array(binPack.buffer, binPack.byteOffset, binPack.byteLength)
     const infoFrom = buffer.byteLength - infoSize - 2
     const infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
     const decoded = decoder.decode(infoEncoded)
-    const infoArr = JSON.parse(decoded)
-    const binObj = {}
-    infoArr.forEach(bufPack => {
-      const [name, type, offset, length] = bufPack
-      binObj[name] = readTypedBuffer(type, buffer, offset, length)
-    })
-
-    // set args with values
-    if (binObj.$) {
-      const argLen = binObj.$
-      const args = []
-      for (let n = 0; n < argLen; n++) {
-        args.push(binObj[n])
-      }
-      binObj.args = args
-      binObj.$ = binObj.args // same  .args or .$
-    }
-    // prn('binObj',binObj)
-    return binObj // Object {}
+    const info = JSON.parse(decoded)
+    return info
   } catch (error) {
-
   }
+}
+
+
+function readTAIL(binPack) {
+  try {
+    const dv = new DataView(binPack.buffer, binPack.byteOffset, binPack.byteLength)
+    const infoSize = dv.getUint16(binPack.byteLength - TAIL_LEN)  // last 2 bytes for json-info-length.
+
+    // Tip. some MBP has not jsonInfo. It has only raw Buffer.
+    // Or broken MBP buffer will return 0.
+    if (infoSize > binPack.byteLength || binPack.byteLength < TAIL_LEN) return 0
+    return infoSize
+
+  } catch (error) {
+    return 0
+  }
+
+}
+
+
+// accept Uint8Array binPack.
+export function getInfoSize(binPack) {
+  //1. size check
+  const infoSize = readTAIL(binPack)
+  if (infoSize === 0) return 0
+  //2. try parse JSON 
+  const success = parseInfo(binPack, infoSize)
+  //3. success: infoObject
+  if (success) return infoSize
+}
+
+
+/*
+* Add additional buffer item info:  
+* 1. item's byteLength. parse from type name.
+* 2. add more meaningful type name.    i32L => int32_le 
+*/
+export function getBufferInfoDetail(binPack) {
+
+  const infoArr = getBufferInfo(binPack)
+  if (!infoArr) return
+  infoArr.forEach(bufPack => {
+    const len = bufPack[3]
+    if (len == undefined) { // when typedvalue
+      if (bufPack[1].includes('8')) bufPack[3] = 1
+      else if (bufPack[1].includes('16')) bufPack[3] = 2
+      else if (bufPack[1].includes('32')) bufPack[3] = 4
+      else if (bufPack[1].includes('F')) bufPack[3] = 4
+      else if (bufPack[1].includes('!')) bufPack[3] = 1
+    }
+    bufPack[4] = parseTypeName(bufPack[1])
+  })
+  return infoArr
+}
+
+// return object when success.
+// return undefined when fail.
+export function unpack(binPack) {
+
+  const infoArr = getBufferInfo(binPack)
+  if (!infoArr) return
+
+  const buffer = Buffer.from(binPack)
+  const binObj = {}
+  infoArr.forEach(bufPack => {
+    const [name, type, offset, length] = bufPack
+    binObj[name] = readTypedBuffer(type, buffer, offset, length)
+  })
+
+  // set args with values
+  if (binObj.$) {
+    const argLen = binObj.$
+    const args = []
+    for (let n = 0; n < argLen; n++) {
+      args.push(binObj[n])
+    }
+    binObj.args = args
+    binObj.$ = binObj.args // alias
+  }
+  return binObj
+
 }
 
 /*
@@ -332,16 +403,15 @@ U8('str')     // string
 U8( number )  // number is initvalue range 0~255.  return one byte.
 U8( buffer )  // buffer, typedArray or arrayBuffer
 U8( object )  // array ,object
-
 */
 export const U8 = parseUint8Array
 export function parseUint8Array(data, shareArrayBuffer = false) {
   if (data === undefined) throw TypeError('Invalid data type: Undefined')
-  if (typeof data === 'string') { // string > encode > uint8array
+  if (typeof data === 'string') {
     return encoder.encode(data)
-  } else if (typeof data === 'number') { // number > 1 byte uint8array(number)
+  } else if (typeof data === 'number') { // number -> 1 byte uint8array(number)
     return Uint8Array.from([data])
-  } else if (data instanceof ArrayBuffer) { // arraybuffer > wrap uint8array(ab)
+  } else if (data instanceof ArrayBuffer) { // arraybuffer -> wrap uint8array(ab)
     if (shareArrayBuffer) {
       return new Uint8Array(data)
     } else {
@@ -418,6 +488,5 @@ export function equal(buf1, buf2) {
   for (let i = 0; i < buf1.byteLength; i++) {
     if (buf1[i] !== buf2[i]) return false
   }
-
   return true
 }
