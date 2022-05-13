@@ -4,5 +4,5 @@ node_modules/
 .DS_Store
 .vscode/settings.json
 package-lock.json
-package-lock.json
 pubGithubPageDocs.sh
+dist/
