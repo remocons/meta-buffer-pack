@@ -1,4 +1,5 @@
 import { MBP , Buffer } from '../src/index.js'
+import { getFrame, getBuffer, getBufferSize, U8pack ,U8} from '../src/meta-buffer-pack.js'
 
 
 const pack1 = MBP.pack(
@@ -11,6 +12,9 @@ const pack1 = MBP.pack(
     MBP.MB('v2', Buffer.from([1,2,3]) ),
     MBP.MB('v_num', 12345.67 )
 )
+
+
+
 const pack2 = MBP.pack(
     MBP.MB('#v_u32', '32', 0x11223344 ),
     MBP.MB('#v_u16', '16', 0x1122 ),
@@ -20,27 +24,38 @@ const pack2 = MBP.pack(
 
 
 console.log( '\npack1: buffer with meta info')
-console.log( 'getRawBuffer', MBP.getRawBuffer(pack1))
-console.log( 'getBufferInfo', MBP.getBufferInfo(pack1))
-console.log( 'getBufferInfoDetail', MBP.getBufferInfoDetail(pack1))
-console.log( 'getRawBufferSize', MBP.getRawBufferSize(pack1))
-console.log( 'getBufferInfoSize', MBP.getInfoSize(pack1))
+console.log( 'getBuffer', MBP.getBuffer(pack1))
+console.log( 'getFrame', MBP.getFrame(pack1))
+console.log( 'getFrame detail', MBP.getFrame(pack1, true))
+console.log( 'getBufferSize', MBP.getBufferSize(pack1))
+console.log( 'getFrameSize', MBP.getFrameSize(pack1))
 console.log( 'pack.byteLength', pack1.byteLength )
 
 console.log( '\npack2: rawBuffer')
-console.log( 'getRawBuffer', MBP.getRawBuffer(pack2))
-console.log( 'getBufferInfo', MBP.getBufferInfo(pack2))
-console.log( 'getBufferInfoDetail', MBP.getBufferInfoDetail(pack2))
-console.log( 'getRawBufferSize', MBP.getRawBufferSize(pack2))
-console.log( 'getBufferInfoSize', MBP.getInfoSize(pack2))
+console.log( 'getBuffer', MBP.getBuffer(pack2))
+console.log( 'getFrame', MBP.getFrame(pack2))
+console.log( 'getFrame detail', MBP.getFrame(pack2, true))
+console.log( 'getBufferSize', MBP.getBufferSize(pack2))
+console.log( 'getFrameSize', MBP.getFrameSize(pack2))
 console.log( 'pack.byteLength', pack2.byteLength )
 
-// console.log('pack hex:', MBP.hex( rawBufferPack ) )
-// console.log('pack byteLength:', rawBufferPack.byteLength )
-// console.log('pack rawBufferSize:', MBP.getRawBufferSize(rawBufferPack)  )
-// console.log('pack infoSize:', MBP.getInfoSize(rawBufferPack)  )
 
-// const rawBufferItemList = MBP.getBufferInfoDetail( rawBufferPack )
+const mbo1 = MBP.unpack( pack1 )
+console.log( 'mbo1', mbo1 )
 
-// console.log( rawBufferItemList , "== undefined is correct. raw buffer has no buffer info." )
-// // 8, 16,32,f,!
+
+const infoPack = MBP.pack(
+  MBP.MB('v_u32', '32', 4 ),
+  MBP.MB('v_float', 'f', 3.141592 ),
+  MBP.MB('v_u16', '16', 2 )
+  )
+
+  const infoFrame = MBP.getFrame( infoPack )
+  const mbo2 = MBP.unpack( pack1, infoFrame )
+  console.log( 'mbo2', mbo2 )
+
+  
+
+ 
+  
+  

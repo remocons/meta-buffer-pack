@@ -270,106 +270,15 @@ export function pack(...args) {
 }
 
 
-export function getRawBuffer( binPack ) {
-  const rawBufferSize = getRawBufferSize( binPack)
-  return binPack.subarray(0,rawBufferSize)
-}
+/**
+ * 
+ * @param {Buffer|Uint8Array} binPack binaryData
+ * @param {Object} infoFrame OPTION. default: unpacker try to read frame-info from binPack(embeded).  You can specify frameInfo obejct. (It's useful for raw buffer)
+ * @returns {Object|undefined} success: return Object (include buffer data).   fail: return undefined
+ */
+export function unpack(binPack, infoFrame) {
 
-// Meta buffer pack
-// include TAIL(two bytes) size info at the end if it has JSON info.
-// if it has not JSON JSON info then TAIL(two bytes) is ommited.
-export const TAIL_LEN = 2
-
-export function getRawBufferSize(binPack) {
-  if (getInfoSize(binPack) === 0) {
-    return binPack.byteLength
-  } else {
-    return binPack.byteLength - getInfoSize(binPack) - TAIL_LEN
-  }
-
-}
-
-/*
-  success: return infoObject 
-  fail: undefiend 
-*/
-export function getBufferInfo(binPack) {
-  const infoSize = readTAIL(binPack)
-  if (infoSize === 0) return
-  return parseInfo(binPack, infoSize)
-}
-
-// # internal use
-function parseInfo(binPack, infoSize) {
-  try {
-    const buffer = new Uint8Array(binPack.buffer, binPack.byteOffset, binPack.byteLength)
-    const infoFrom = buffer.byteLength - infoSize - 2
-    const infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
-    const decoded = decoder.decode(infoEncoded)
-    const info = JSON.parse(decoded)
-    return info
-  } catch (error) {
-  }
-}
-
-
-function readTAIL(binPack) {
-  try {
-    const dv = new DataView(binPack.buffer, binPack.byteOffset, binPack.byteLength)
-    const infoSize = dv.getUint16(binPack.byteLength - TAIL_LEN)  // last 2 bytes for json-info-length.
-
-    // Tip. some MBP has not jsonInfo. It has only raw Buffer.
-    // Or broken MBP buffer will return 0.
-    if (infoSize > binPack.byteLength || binPack.byteLength < TAIL_LEN) return 0
-    return infoSize
-
-  } catch (error) {
-    return 0
-  }
-
-}
-
-
-// accept Uint8Array binPack.
-export function getInfoSize(binPack) {
-  //1. size check
-  const infoSize = readTAIL(binPack)
-  if (infoSize === 0) return 0
-  //2. try parse JSON 
-  const success = parseInfo(binPack, infoSize)
-  //3. success: infoObject
-  if (success) return infoSize
-}
-
-
-/*
-* Add additional buffer item info:  
-* 1. item's byteLength. parse from type name.
-* 2. add more meaningful type name.    i32L => int32_le 
-*/
-export function getBufferInfoDetail(binPack) {
-
-  const infoArr = getBufferInfo(binPack)
-  if (!infoArr) return
-  infoArr.forEach(bufPack => {
-    const len = bufPack[3]
-    if (len == undefined) { // when typedvalue
-      if (bufPack[1].includes('8')) bufPack[3] = 1
-      else if (bufPack[1].includes('16')) bufPack[3] = 2
-      else if (bufPack[1].includes('32')) bufPack[3] = 4
-      else if (bufPack[1].includes('F')) bufPack[3] = 4
-      else if (bufPack[1].includes('!')) bufPack[3] = 1
-    }
-    bufPack[4] = parseTypeName(bufPack[1])
-  })
-  return infoArr
-}
-
-// return object when success.
-// return undefined when fail.
-export function unpack(binPack) {
-
-  const infoArr = getBufferInfo(binPack)
+  const infoArr = infoFrame || getFrame(binPack)
   if (!infoArr) return
 
   const buffer = Buffer.from(binPack)
@@ -404,7 +313,9 @@ U8( number )  // number is initvalue range 0~255.  return one byte.
 U8( buffer )  // buffer, typedArray or arrayBuffer
 U8( object )  // array ,object
 */
+
 export const U8 = parseUint8Array
+
 export function parseUint8Array(data, shareArrayBuffer = false) {
   if (data === undefined) throw TypeError('Invalid data type: Undefined')
   if (typeof data === 'string') {
@@ -462,6 +373,7 @@ export function parseBufferThenConcat(...dataArray) {
 // 1. normalize: Uint8array list
 // 2. return new buffer merged.
 export const U8pack = parseUint8ThenConcat
+
 export function parseUint8ThenConcat(...dataArray) {
   try {
     let bufferSize = 0
@@ -489,4 +401,147 @@ export function equal(buf1, buf2) {
     if (buf1[i] !== buf2[i]) return false
   }
   return true
+}
+
+
+
+
+export function getBufferSize(binPack) {
+  if (getFrameSize(binPack) === 0) {
+    return binPack.byteLength
+  } else {
+    return binPack.byteLength - getFrameSize(binPack) - TAIL_LEN
+  }
+
+}
+
+
+// # internal use
+export function parseFrameInfo(binPack, infoSize) {
+  let info;
+  try {
+    const buffer = new Uint8Array(binPack.buffer, binPack.byteOffset, binPack.byteLength)
+    const infoFrom = buffer.byteLength - infoSize - 2
+    const infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
+    const decoded = decoder.decode(infoEncoded)
+    const info = JSON.parse(decoded)
+
+    // Test minimum Frame structure: [['name','type',3]]
+    // two demension array.  at least one child.
+    // a child has 3 or 4 element.
+    // first and second :  String,  third: Number  , *fourth: typed Value has not 4th element.
+    if (!Array.isArray(info) || !Array.isArray(info[0])) return
+
+    let firstItem = info[0]
+    if (!firstItem) return
+
+    if (firstItem.length < 3) return
+    const [name, type, offset] = firstItem
+
+    // console.log("#####", name, type, offset )
+    if (typeof name !== 'string' || typeof type !== 'string' || typeof offset !== 'number') return
+
+    return info
+  } catch (error) {
+    // console.log('Invalid JSON', infoSize)
+  }
+}
+
+
+/** 
+ * Meta buffer pack Tail:
+ * binary Pack include TAIL(two bytes size) info at the end if it has JSON info.
+ * not include TAIL if it has not JSON.
+ */
+export const TAIL_LEN = 2
+
+/**
+ * 
+ * @param {Buffer|Uint8Array} binPack 
+ * @returns {Number} last two byte value( read Uint16 bigendian )
+ */
+export function readTail(binPack) {
+  if (binPack instanceof Uint8Array) {
+    if (binPack.byteLength <= TAIL_LEN) return 0
+
+    const dv = new DataView(binPack.buffer, binPack.byteOffset, binPack.byteLength)
+    const infoSize = dv.getUint16(binPack.byteLength - TAIL_LEN)  // last 2 bytes for json-info-length.
+    return infoSize
+
+  } else {
+    throw TypeError('invalid data type.')
+  }
+
+}
+
+
+// accept Uint8Array binPack.
+export function getFrameSize(binPack) {
+  if (binPack instanceof Uint8Array) {
+
+    const size = binPack.byteLength
+    if (size <= TAIL_LEN) return 0
+
+    //1. tail size check
+    const infoSize = readTail(binPack)
+    if (infoSize === 0 || infoSize > size) return 0
+    //2. try parse JSON 
+    const success = parseFrameInfo(binPack, infoSize)
+    //3. return success: jsonInfoSize,  fail: 0
+    if (success) return infoSize
+    else return 0
+  }
+}
+
+
+/**
+ * 
+ * @param {Buffer|Uint8Array} binPack 
+ * @returns {Buffer} 
+ */
+export function getBuffer(binPack) {
+  const rawBufferSize = getBufferSize(binPack)
+  return binPack.subarray(0, rawBufferSize)
+}
+
+
+/**
+ * 
+ * @param {Buffer|Uint8Array} binPack 
+ * @param {Boolean} showDetail add additional item info: full data type name and bytelength.
+ * @returns {Object|undefined} success: return frameInfo Object.   fail: return undefined.(No valid JSON included.)
+ */
+export function getFrame(binPack, showDetail = false) {
+  const infoSize = readTail(binPack)
+  if (infoSize === 0) return
+
+  // check valid Frame , valid JSON.
+  let frameInfo = parseFrameInfo(binPack, infoSize)
+  if (!frameInfo) return
+
+
+  if (!showDetail) {
+    return frameInfo
+  } else {
+    frameInfo.forEach(bufPack => {
+      const len = bufPack[3]
+      if (len == undefined) {
+        // frameInfo has not typedValue's bytelength info.
+        if (bufPack[1].includes('8')) bufPack[3] = 1
+        else if (bufPack[1].includes('16')) bufPack[3] = 2
+        else if (bufPack[1].includes('32')) bufPack[3] = 4
+        else if (bufPack[1].includes('F')) bufPack[3] = 4
+        else if (bufPack[1].includes('!')) bufPack[3] = 1
+      }
+      bufPack[4] = parseTypeName(bufPack[1])
+    })
+    return frameInfo
+
+  }
+}
+
+
+
+export function getFrameDetail(binPack) {
+  return getFrame(binPack, true)
 }
