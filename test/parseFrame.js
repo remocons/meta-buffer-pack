@@ -1,0 +1,54 @@
+import assert from 'assert/strict'
+import { MBP, Buffer } from '../src/index.js'
+const MB = MBP.MB
+
+describe('parseFrameInfo', function () {
+
+  describe('Valid JSON, but Invalid Frame.', function () {
+
+
+    describe('Frame is array. but without child is invalid.', function () {
+      it('should return undefined', function () {
+
+        let jsonStr = '[1111111]'
+        let jsonBuffer = MBP.B8( jsonStr )
+        let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
+        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+      })
+    })
+
+
+    describe('child should not has 3 or 4 items.', function () {
+      it('should return undefined', function () {
+        let jsonStr = '[[1,2]]'
+        let jsonBuffer = MBP.B8( jsonStr )
+        let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
+        // console.log('pack', pack)
+        // console.log( MBP.parseFrameInfo(pack )  )
+        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+      })
+    })
+    
+    describe('3 element. but first and second is not string', function () {
+      it('should return undefined', function () {
+        let jsonStr = '[[1,2,3]]'
+        let jsonBuffer = MBP.B8( jsonStr )
+        let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
+        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+      })
+    })
+    
+  })
+
+  describe('Valid Frame', function () {
+    describe('has element. first,second :string, 3rd: number ', function () {
+      it('should return object', function () {
+        let jsonStr = '[["","",3]]'
+        let jsonBuffer = MBP.B8( jsonStr )
+        let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
+        assert.ok( typeof MBP.parseFrameInfo(pack ) === 'object')
+      })
+    })
+  })
+
+})
