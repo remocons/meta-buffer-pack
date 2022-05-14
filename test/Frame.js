@@ -12,30 +12,27 @@ describe('Frame', function () {
     )
 
     describe('getFrame basic', function () {
-      // frame object's first child is array that has 3 or 4 elements.
-      // [ name:string, type:string, offset:number [,length:number] ]
-
+      
       const frameInfo = MBP.getFrame(packWithInfo)
-
+      
       it('should return object', function () {
         assert.ok(typeof frameInfo === 'object')
       })
-
-      it('should first child: with 1st element is string type', function () {
-        assert.ok(typeof frameInfo[0][0] === 'string') // name
-      })
+      
+      // frame object's first child is array that has 3 or 4 elements.
+      // [ name:string|number, type:string, offset:number [,length:number] ]
       it('should first child: with 2nd element is string type', function () {
-        assert.ok(typeof frameInfo[0][1] === 'string') // type
+        assert.ok(typeof frameInfo[0][1] === 'string') // type is string
       })
       it('should first child: with 3rd element is number', function () {
-        assert.ok(typeof frameInfo[0][2] === 'number') // offset
+        assert.ok(typeof frameInfo[0][2] === 'number') // offset is number
       })
 
     })
 
     describe('getFrameDetail', function () {
       // frameDetail object's first child is array which has 5 elements.
-      // [ name:string, type:string, offset:number, length:number , fullTypeName:string ]
+      // [ name:string:number, type:string, offset:number, length:number , fullTypeName:string ]
 
       it('should return object', function () {
         assert.ok(typeof MBP.getFrameDetail(packWithInfo) === 'object')

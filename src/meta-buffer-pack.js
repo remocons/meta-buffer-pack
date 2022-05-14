@@ -406,8 +406,7 @@ export function getBufferSize(binPack) {
 
 }
 
-
-// # internal use
+// MB and MBA 
 export function parseFrameInfo(binPack, infoSize) {
   let info;
   try {
@@ -417,10 +416,13 @@ export function parseFrameInfo(binPack, infoSize) {
     const decoded = decoder.decode(infoEncoded)
     const info = JSON.parse(decoded)
 
-    // Test minimum Frame structure: [['name','type',3]]
+    // console.log( '###########', info )
+
+    // Test minimum Frame structure: [['name','type',3]]  
     // two demension array.  at least one child.
     // a child has 3 or 4 element.
-    // first and second :  String,  third: Number  , *fourth: typed Value has not 4th element.
+    // first: String|Number  second :  String,  third: Number  , *fourth: typed Value has not 4th element.
+
     if (!Array.isArray(info) || !Array.isArray(info[0])) return
 
     let firstItem = info[0]
@@ -429,8 +431,7 @@ export function parseFrameInfo(binPack, infoSize) {
     if (firstItem.length < 3) return
     const [name, type, offset] = firstItem
 
-    // console.log("#####", name, type, offset )
-    if (typeof name !== 'string' || typeof type !== 'string' || typeof offset !== 'number') return
+    if ( typeof type !== 'string' || typeof offset !== 'number') return
 
     return info
   } catch (error) {
@@ -498,11 +499,6 @@ export function getBuffer(binPack) {
 }
 
 
-/*
-* TERM. Frame
-* Frame is meta data of bundled buffers in binary pack.
-* Frame sotred JSON format.
-*/
 
 /**
  * extract frame info object if it has.

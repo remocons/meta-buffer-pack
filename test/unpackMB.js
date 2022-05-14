@@ -1,7 +1,7 @@
 import assert from 'assert/strict'
 import { MBP, Buffer } from '../src/index.js'
 
-describe('unpack', function () {
+describe('unpack MB', function () {
   describe('when unpack() fail. ', function () {
     it('should return undefined', function () {
       const pack = MBP.pack(

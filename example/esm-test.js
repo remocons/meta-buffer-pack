@@ -119,18 +119,6 @@ test4()
 test5()
 
 
-function testU8pack(){
-  let pack = U8pack(
-    U8(1),
-    U8('hi')
-  )
-
-  prn(pack)
-}
-testU8pack();
-
-
-
 
 function packFunctionParams( ...args){
   return MBP.pack(  MBP.MBA(...args) )
@@ -140,13 +128,22 @@ let mbaPack = packFunctionParams( 'hi', 2332, 22.2, [1, 2, 3], { 'hi': 'yeh' }, 
 
 prn( mbaPack.byteLength )
 prn( mbaPack )
+
+prn('frameDetail', MBP.getFrameDetail(mbaPack))
+
 let mbaObj = MBP.unpack( mbaPack )
 
-prn(mbaObj.args )  // or mbaObj.$ 
+if( mbaObj ){
 
-prn(mbaObj.args[0])
-prn(mbaObj.$[1])
-prn(mbaObj.args[2])
-prn(mbaObj.args[3])
-prn(mbaObj.args[4])
-prn(mbaObj.args[5])
+  prn(mbaObj )  // or mbaObj.$ 
+  prn(mbaObj.args )  // or mbaObj.$ 
+  
+  prn(mbaObj.args[0])
+  prn(mbaObj.$[1])
+  prn(mbaObj.args[2])
+  prn(mbaObj.args[3])
+  prn(mbaObj.args[4])
+  prn(mbaObj.args[5])
+}else{
+  console.log('unpack failed. invalid MBP')
+}
