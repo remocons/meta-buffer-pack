@@ -302,20 +302,15 @@ export function unpack(binPack, infoFrame) {
 
 }
 
-/*
-@input: any
-@shareArrayBuffer option:    false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer.
-@return uint8Array.
 
-// use case
-U8('str')     // string
-U8( number )  // number is initvalue range 0~255.  return one byte.
-U8( buffer )  // buffer, typedArray or arrayBuffer
-U8( object )  // array ,object
-*/
 
-export const U8 = parseUint8Array
-
+export const U8 = parseUint8Array   //alias
+/**
+ * 
+ * @param {any} data 
+ * @param {Boolean} shareArrayBuffer false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer.
+ * @returns {Uint8Array}
+ */
 export function parseUint8Array(data, shareArrayBuffer = false) {
   if (data === undefined) throw TypeError('Invalid data type: Undefined')
   if (typeof data === 'string') {
@@ -349,31 +344,27 @@ export function parseUint8Array(data, shareArrayBuffer = false) {
 export const B8 = parseBuffer
 export function parseBuffer(data, shareArrayBuffer = false) {
   const u8 = parseUint8Array(data, shareArrayBuffer)
-  return Buffer.from(u8)
+  if( shareArrayBuffer){
+    return Buffer.from( u8.buffer, u8.byteOffset, u8.byteLength )
+  }else{
+    return Buffer.from(u8)
+  }
 }
 
 export const B8pack = parseBufferThenConcat
 export function parseBufferThenConcat(...dataArray) {
-  try {
-    let bufferSize = 0
-    let offset = 0
-    const buffers = dataArray.map(data => parseBuffer(data))
-    buffers.forEach(buf => { bufferSize += buf.byteLength })
-    const buffer = Buffer.alloc(bufferSize)
-    buffers.forEach(buf => {
-      buffer.set(buf, offset)
-      offset += buf.byteLength
-    })
-    return buffer
-  } catch (error) {
-    console.log(error)
-  }
+  const buffers = dataArray.map(data => parseBuffer(data))
+  return Buffer.concat( buffers)
 }
 
-// 1. normalize: Uint8array list
-// 2. return new buffer merged.
-export const U8pack = parseUint8ThenConcat
 
+export const U8pack = parseUint8ThenConcat // alias
+/**
+ * 1. parse list of data into U8 list
+ * 2. return new Uint8Array merged.
+ * @param  {...any} dataArray 
+ * @returns 
+ */
 export function parseUint8ThenConcat(...dataArray) {
   try {
     let bufferSize = 0
@@ -475,7 +466,9 @@ export function readTail(binPack) {
 }
 
 
-// accept Uint8Array binPack.
+// binay data pack is not always Buffer.  
+// It should accept Uint8Array binPack.
+// This function don't use Buffer method.
 export function getFrameSize(binPack) {
   if (binPack instanceof Uint8Array) {
 
@@ -505,7 +498,14 @@ export function getBuffer(binPack) {
 }
 
 
+/*
+* TERM. Frame
+* Frame is meta data of bundled buffers in binary pack.
+* Frame sotred JSON format.
+*/
+
 /**
+ * extract frame info object if it has.
  * 
  * @param {Buffer|Uint8Array} binPack 
  * @param {Boolean} showDetail add additional item info: full data type name and bytelength.
@@ -515,28 +515,26 @@ export function getFrame(binPack, showDetail = false) {
   const infoSize = readTail(binPack)
   if (infoSize === 0) return
 
-  // check valid Frame , valid JSON.
+  // check valid Frame
   let frameInfo = parseFrameInfo(binPack, infoSize)
   if (!frameInfo) return
-
 
   if (!showDetail) {
     return frameInfo
   } else {
+    // add additional info
     frameInfo.forEach(bufPack => {
       const len = bufPack[3]
-      if (len == undefined) {
-        // frameInfo has not typedValue's bytelength info.
+      if (len == undefined) {  // add size info.
         if (bufPack[1].includes('8')) bufPack[3] = 1
         else if (bufPack[1].includes('16')) bufPack[3] = 2
         else if (bufPack[1].includes('32')) bufPack[3] = 4
         else if (bufPack[1].includes('F')) bufPack[3] = 4
         else if (bufPack[1].includes('!')) bufPack[3] = 1
       }
-      bufPack[4] = parseTypeName(bufPack[1])
+      bufPack[4] = parseTypeName(bufPack[1])  // add full-type-name.
     })
     return frameInfo
-
   }
 }
 

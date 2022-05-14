@@ -1,5 +1,5 @@
-import { MBP , Buffer } from '../src/index.js'
-import { getFrame, getBuffer, getBufferSize, U8pack ,U8} from '../src/meta-buffer-pack.js'
+// import { MBP , Buffer } from '../src/index.js'
+import { MBP , Buffer } from 'meta-buffer-pack'
 
 
 const pack1 = MBP.pack(
@@ -46,6 +46,7 @@ console.log( 'mbo1', mbo1 )
 
 const infoPack = MBP.pack(
   MBP.MB('v_u32', '32', 4 ),
+  MBP.MB('v name with space', '32', 4 ),
   MBP.MB('v_float', 'f', 3.141592 ),
   MBP.MB('v_u16', '16', 2 )
   )
@@ -53,6 +54,15 @@ const infoPack = MBP.pack(
   const infoFrame = MBP.getFrame( infoPack )
   const mbo2 = MBP.unpack( pack1, infoFrame )
   console.log( 'mbo2', mbo2 )
+
+
+  const frameDetail = MBP.getFrameDetail( infoPack )
+  console.log( 'frameDetail', frameDetail )
+  console.log( 'size', frameDetail[0][3] )
+  console.log( 'full-type-name', frameDetail[0][4] )
+  console.log( 'bytes', Uint32Array.BYTES_PER_ELEMENT )
+
+
 
   
 
