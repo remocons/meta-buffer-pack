@@ -8,7 +8,7 @@ export default [
     input: './src/index.js',
     output: [
       {  
-      file: pkg.browser,  // Use modern ES Module!
+      file: pkg.browser_esm,  // Use modern ES Module!
       format: 'es', 
       name: 'MBP',
       sourcemap: true  
@@ -25,7 +25,7 @@ export default [
     input: './src/index-iife.js',
     output: [
       {
-      file: pkg.browseriife,
+      file: pkg.browser,
       format: 'iife', // immediately-invoked function expression — suitable for <script> tags
       name: 'MBP',
       sourcemap: true

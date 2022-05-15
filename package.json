@@ -8,8 +8,8 @@
     "import": "./src/index.js",
     "require": "./dist/meta-buffer-pack.cjs"
   },
-  "browseriife": "./dist/meta-buffer-pack.min.js",
-  "browser": "./dist/meta-buffer-pack.esm.js",
+  "browser": "./dist/meta-buffer-pack.min.js",
+  "browser_esm": "./dist/meta-buffer-pack.esm.js",
   "cjs": "./dist/meta-buffer-pack.cjs",
   "esm": "./dist/meta-buffer-pack.mjs",
   "devDependencies": {
@@ -28,9 +28,10 @@
     "buffer",
     "pack",
     "버퍼",
+    "meta",
     "serialize"
   ],
-  "homepage": "https://github.com/congtrol/meta-buffer-pack",
+  "homepage": "https://congtrol.github.io/meta-buffer-pack/",
   "repository": {
     "type": "git",
     "url": "https://github.com/congtrol/meta-buffer-pack.git"
