@@ -129,7 +129,7 @@ let mbaPack = packFunctionParams( 'hi', 2332, 22.2, [1, 2, 3], { 'hi': 'yeh' }, 
 prn( mbaPack.byteLength )
 prn( mbaPack )
 
-prn('frameDetail', MBP.getFrameDetail(mbaPack))
+prn('metaDetail', MBP.getMetaDetail(mbaPack))
 
 let mbaObj = MBP.unpack( mbaPack )
 

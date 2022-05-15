@@ -2,18 +2,18 @@ import assert from 'assert/strict'
 import { MBP, Buffer } from '../src/index.js'
 const MB = MBP.MB
 
-describe('parseFrameInfo', function () {
+describe('parseMetaInfo', function () {
 
-  describe('Valid JSON, but Invalid Frame.', function () {
+  describe('Valid JSON, but Invalid Meta.', function () {
 
 
-    describe('Frame is array. but without child is invalid.', function () {
+    describe('Meta is array. but without child is invalid.', function () {
       it('should return undefined', function () {
 
         let jsonStr = '[1111111]'
         let jsonBuffer = MBP.B8( jsonStr )
         let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
-        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+        assert.ok( MBP.parseMetaInfo(pack ) === undefined)
       })
     })
 
@@ -24,8 +24,8 @@ describe('parseFrameInfo', function () {
         let jsonBuffer = MBP.B8( jsonStr )
         let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
         // console.log('pack', pack)
-        // console.log( MBP.parseFrameInfo(pack )  )
-        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+        // console.log( MBP.parseMetaInfo(pack )  )
+        assert.ok( MBP.parseMetaInfo(pack ) === undefined)
       })
     })
     
@@ -34,19 +34,19 @@ describe('parseFrameInfo', function () {
         let jsonStr = '[[1,2,3]]'
         let jsonBuffer = MBP.B8( jsonStr )
         let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
-        assert.ok( MBP.parseFrameInfo(pack ) === undefined)
+        assert.ok( MBP.parseMetaInfo(pack ) === undefined)
       })
     })
     
   })
 
-  describe('Valid Frame', function () {
+  describe('Valid Meta', function () {
     describe('has element. first,second :string, 3rd: number ', function () {
       it('should return object', function () {
         let jsonStr = '[["","",3]]'
         let jsonBuffer = MBP.B8( jsonStr )
         let pack = MBP.pack( MB('#json', jsonBuffer ) , MB('','16', jsonBuffer.byteLength ) )
-        assert.ok( typeof MBP.parseFrameInfo(pack ) === 'object')
+        assert.ok( typeof MBP.parseMetaInfo(pack ) === 'object')
       })
     })
   })

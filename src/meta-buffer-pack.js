@@ -271,14 +271,18 @@ export function pack(...args) {
 
 
 /**
+ * unpack() will use embeded meta info from the binary pack.  
+ * You can specify (optional) meta obejct. 
+ * (It's useful to read pure buffer data.)
  * 
+ * You can get the meta object from:  getFrame(pack) , meta()
  * @param {Buffer|Uint8Array} binPack binaryData
- * @param {Object} infoFrame OPTION. default: unpacker try to read frame-info from binPack(embeded).  You can specify frameInfo obejct. (It's useful for raw buffer)
+ * @param {Object} meta *OPTION*  
  * @returns {Object|undefined} success: return Object (include buffer data).   fail: return undefined
  */
-export function unpack(binPack, infoFrame) {
+export function unpack(binPack, meta) {
 
-  const infoArr = infoFrame || getFrame(binPack)
+  const infoArr = meta || getMeta(binPack)
   if (!infoArr) return
 
   const buffer = Buffer.from(binPack)
@@ -398,16 +402,16 @@ export function equal(buf1, buf2) {
 
 
 export function getBufferSize(binPack) {
-  if (getFrameSize(binPack) === 0) {
+  if (getMetaSize(binPack) === 0) {
     return binPack.byteLength
   } else {
-    return binPack.byteLength - getFrameSize(binPack) - TAIL_LEN
+    return binPack.byteLength - getMetaSize(binPack) - TAIL_LEN
   }
 
 }
 
 // MB and MBA 
-export function parseFrameInfo(binPack, infoSize) {
+export function parseMetaInfo(binPack, infoSize) {
   let info;
   try {
     const buffer = new Uint8Array(binPack.buffer, binPack.byteOffset, binPack.byteLength)
@@ -418,7 +422,7 @@ export function parseFrameInfo(binPack, infoSize) {
 
     // console.log( '###########', info )
 
-    // Test minimum Frame structure: [['name','type',3]]  
+    // Test minimum Meta structure: [['name','type',3]]  
     // two demension array.  at least one child.
     // a child has 3 or 4 element.
     // first: String|Number  second :  String,  third: Number  , *fourth: typed Value has not 4th element.
@@ -470,7 +474,7 @@ export function readTail(binPack) {
 // binay data pack is not always Buffer.  
 // It should accept Uint8Array binPack.
 // This function don't use Buffer method.
-export function getFrameSize(binPack) {
+export function getMetaSize(binPack) {
   if (binPack instanceof Uint8Array) {
 
     const size = binPack.byteLength
@@ -480,7 +484,7 @@ export function getFrameSize(binPack) {
     const infoSize = readTail(binPack)
     if (infoSize === 0 || infoSize > size) return 0
     //2. try parse JSON 
-    const success = parseFrameInfo(binPack, infoSize)
+    const success = parseMetaInfo(binPack, infoSize)
     //3. return success: jsonInfoSize,  fail: 0
     if (success) return infoSize
     else return 0
@@ -501,25 +505,25 @@ export function getBuffer(binPack) {
 
 
 /**
- * extract frame info object if it has.
+ * extract Meta info object if it has.
  * 
  * @param {Buffer|Uint8Array} binPack 
  * @param {Boolean} showDetail add additional item info: full data type name and bytelength.
- * @returns {Object|undefined} success: return frameInfo Object.   fail: return undefined.(No valid JSON included.)
+ * @returns {Object|undefined} success: return MetaInfo Object.   fail: return undefined.(No valid JSON included.)
  */
-export function getFrame(binPack, showDetail = false) {
+export function getMeta(binPack, showDetail = false) {
   const infoSize = readTail(binPack)
   if (infoSize === 0) return
 
-  // check valid Frame
-  let frameInfo = parseFrameInfo(binPack, infoSize)
-  if (!frameInfo) return
+  // check valid Meta
+  let metaInfo = parseMetaInfo(binPack, infoSize)
+  if (!metaInfo) return
 
   if (!showDetail) {
-    return frameInfo
+    return metaInfo
   } else {
     // add additional info
-    frameInfo.forEach(bufPack => {
+    metaInfo.forEach(bufPack => {
       const len = bufPack[3]
       if (len == undefined) {  // add size info.
         if (bufPack[1].includes('8')) bufPack[3] = 1
@@ -530,12 +534,22 @@ export function getFrame(binPack, showDetail = false) {
       }
       bufPack[4] = parseTypeName(bufPack[1])  // add full-type-name.
     })
-    return frameInfo
+    return metaInfo
   }
+}
+
+export function meta( ...args){
+ const tmpPack =  pack(...args)
+  return getMeta( tmpPack )
+}
+
+export function metaDetail( ...args){
+ const tmpPack =  pack(...args)
+  return getMeta( tmpPack , true)
 }
 
 
 
-export function getFrameDetail(binPack) {
-  return getFrame(binPack, true)
+export function getMetaDetail(binPack) {
+  return getMeta(binPack, true)
 }
