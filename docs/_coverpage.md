@@ -9,4 +9,4 @@
 - multiple function arguments as a buffer.
 
 [GitHub](https://github.com/congtrol/meta-buffer-pack)
-[Get Started](/readme)
+[Get Started](/README)
