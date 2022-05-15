@@ -8,13 +8,14 @@
 * Frame is JSON format data that contains meta information of buffers.
 * Tail is two bytes size info of the JSON data.
 
+
 ```js 
   pack = [ Buffer: buf1 + buf2 + bufN ]+[,Frame:JSON]+[,Tail: 2bytes ]
  
 ```
 * You can use 
- - getBuffer() method to get the raw buffer.
- - getFrame() method to get the buffer info object.
+ - getBuffer() to get the raw buffer.
+ - getFrame()  to get the buffer info object.
  
 ## pack without frame info.
 
