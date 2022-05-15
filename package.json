@@ -1,6 +1,6 @@
 {
   "name": "meta-buffer-pack",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Meta Buffer Pack",
   "main": "./src/index.js",
   "type": "module",
