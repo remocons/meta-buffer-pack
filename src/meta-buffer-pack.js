@@ -465,7 +465,8 @@ export function readTail(binPack) {
     return infoSize
 
   } else {
-    throw TypeError('invalid data type.')
+    // throw TypeError('invalid data type.')
+    return 0
   }
 
 }
