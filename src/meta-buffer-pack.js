@@ -346,7 +346,9 @@ export function parseUint8Array(data, shareArrayBuffer = false) {
 }
 
 export const B8 = parseBuffer
+
 export function parseBuffer(data, shareArrayBuffer = false) {
+
   const u8 = parseUint8Array(data, shareArrayBuffer)
   if( shareArrayBuffer){
     return Buffer.from( u8.buffer, u8.byteOffset, u8.byteLength )
@@ -420,13 +422,6 @@ export function parseMetaInfo(binPack, infoSize) {
     const decoded = decoder.decode(infoEncoded)
     const info = JSON.parse(decoded)
 
-    // console.log( '###########', info )
-
-    // Test minimum Meta structure: [['name','type',3]]  
-    // two demension array.  at least one child.
-    // a child has 3 or 4 element.
-    // first: String|Number  second :  String,  third: Number  , *fourth: typed Value has not 4th element.
-
     if (!Array.isArray(info) || !Array.isArray(info[0])) return
 
     let firstItem = info[0]
@@ -439,7 +434,7 @@ export function parseMetaInfo(binPack, infoSize) {
 
     return info
   } catch (error) {
-    // console.log('Invalid JSON', infoSize)
+    // return undefined
   }
 }
 
@@ -453,10 +448,13 @@ export const TAIL_LEN = 2
 
 /**
  * 
- * @param {Buffer|Uint8Array} binPack 
+ * @param {Buffer|Uint8Array|ArrayBuffer} binPack 
  * @returns {Number} last two byte value( read Uint16 bigendian )
  */
 export function readTail(binPack) {
+  if( binPack instanceof ArrayBuffer ){
+    binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
+  } 
   if (binPack instanceof Uint8Array) {
     if (binPack.byteLength <= TAIL_LEN) return 0
 
@@ -475,7 +473,11 @@ export function readTail(binPack) {
 // binay data pack is not always Buffer.  
 // It should accept Uint8Array binPack.
 // This function don't use Buffer method.
+
 export function getMetaSize(binPack) {
+  if( binPack instanceof ArrayBuffer ){
+    binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
+  } 
   if (binPack instanceof Uint8Array) {
 
     const size = binPack.byteLength
@@ -489,6 +491,8 @@ export function getMetaSize(binPack) {
     //3. return success: jsonInfoSize,  fail: 0
     if (success) return infoSize
     else return 0
+  }else{
+    return 0
   }
 }
 
@@ -508,11 +512,14 @@ export function getBuffer(binPack) {
 /**
  * extract Meta info object if it has.
  * 
- * @param {Buffer|Uint8Array} binPack 
+ * @param {Buffer|Uint8Array|ArrayBuffer} binPack 
  * @param {Boolean} showDetail add additional item info: full data type name and bytelength.
  * @returns {Object|undefined} success: return MetaInfo Object.   fail: return undefined.(No valid JSON included.)
  */
 export function getMeta(binPack, showDetail = false) {
+  if( binPack instanceof ArrayBuffer ){
+    binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
+  } 
   const infoSize = readTail(binPack)
   if (infoSize === 0) return
 
