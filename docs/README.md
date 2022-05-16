@@ -281,4 +281,4 @@ You can simply evaluate some test code by online page.
 
 
 ### license
-[ISC](LICENSE) Dongeun Lee 이동은 <sixgen@gmail.com>
+[MIT](LICENSE) Dongeun Lee 이동은 <sixgen@gmail.com>
