@@ -44,7 +44,7 @@ const { MBP } = require('meta-buffer-pack')
 <script src="./path/meta-buffer-pack.min.js"></script>
 
 /* or you can use global CDN url */
-<script src="https://cdn.jsdelivr.net/npm/meta-buffer-pack@1.1.0/dist/meta-buffer-pack.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meta-buffer-pack@1/dist/meta-buffer-pack.min.js"></script>
 
 <script>
   // 2. Use global reference name: MBP 
@@ -276,8 +276,8 @@ please check example/ folder. There are commonJS and ES Module example code.
 
 ### online demo
 You can simply evaluate some test code by online page.  
-- [Modern ES Module demo link](https://congtrol.github.io/meta-buffer-pack/example/index-esm.html)
-- [IIFE demo link](https://congtrol.github.io/meta-buffer-pack/example/index-iife.html)
+
+- [demo link](https://congtrol.github.io/meta-buffer-pack/example/index.html)
 
 
 ### license
