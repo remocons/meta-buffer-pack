@@ -8,21 +8,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
   <link rel="stylesheet" href="code.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+
 </head>
 <body>
   <div id="app"></div>
-  <script>
-    window.$docsify = {
-      coverpage: true,
-      executeScript: true,
-      loadSidebar: true,
-      subMaxLevel: 2,
-      name: 'Meta Buffer Pack',
-      repo: 'congtrol/meta-buffer-pack'
-    }
-  </script>
+ 
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="dist/meta-buffer-pack.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/meta-buffer-pack@1/dist/meta-buffer-pack.min.js"></script>
+  <script>
+    // var num = 0;
+    // mermaid.initialize({ startOnLoad: false });
+  </script>
+
+<script>
+  var num = 0;
+  mermaid.initialize({ startOnLoad: false });
+
+  window.$docsify = {
+    coverpage: true,
+    executeScript: true,
+    loadSidebar: true,
+    subMaxLevel: 2,
+    name: 'Meta Buffer Pack',
+    repo: 'congtrol/meta-buffer-pack',
+    markdown: {
+      renderer: {
+        code: function(code, lang) {
+          if (lang === "mermaid") {
+            return (
+              '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + "</div>"
+            );
+          }
+          return this.origin.code.apply(this, arguments);
+        }
+      }
+    }
+  }
+</script>
 </body>
 </html>

@@ -24,39 +24,50 @@
   
   <div><button id="evalBtn">EVAL</button></div>
   <textarea class='code' id="code" cols="30" rows="10" spellcheck="false">
-  // IIFE 
-  // 1. include  meta-buffer-pack.min.js  
-  // 2. Use global MBP 
-  // 3. Use global MBP.Buffer for Node's Buffer.
 
+    // pack() simple merge Buffers.
 
-  // pack()  multiple meta buffers => one buffer
-  let pack = MBP.pack(
-    MBP.MB('v1','8',123),  // uint8
-    MBP.MB('v2','i16',-31234),  //int16
-    MBP.MB('v3','16L', 0x1234),  //Uint16 LittleEndian
-    MBP.MB('v4','32', 4200000000),   // uint32
-    MBP.MB('pi','f', 3.141592),   // float as 4bytes buffer
-    MBP.MB('v5','n', 123.456),   // float as number string
+    // If you want pure Buffer without meta info.
+    // please insert '#' charactor into name filed. or use null string "".
+    
+    prn('\n#','Pure Buffer')
+
+    let pureBuffer = MBP.pack(
+      MBP.MB('#v1','16',15),  // Uint16 
+      MBP.MB('#v2','i16',-15),  //Int16
+      MBP.MB('','32', 0x11223344),  // Uint32 BegEndian
+      MBP.MB('','32L', 0x11223344)  // Uint32 LittleEndian
+    )
+    
+    prn(' pureBuffer', MBP.hex( pureBuffer ) )  // No meta info.
+    prn(' pureBuffer.byteLength ', pureBuffer.byteLength )  // 12bytes : 2 + 2 + 4 + 4
+
+  
+prn('\n#','Buffer with Meta Info')
+prn(' -','added addtional data.')
+
+// pack() : multiple meta buffers => one buffer
+  let mbPack = MBP.pack(
+    MBP.MB('v1','16',15),  // Uint16 
+    MBP.MB('v2','i16',-15),  //Int16
+    MBP.MB('v3','32', 0x11223344),  // Uint32 BegEndian
+    MBP.MB('v4','32L', 0x11223344),   // Uint32 LittleEndian
     MBP.MB('vStr','abcde'),  // buffer string
-    MBP.MB('#omitInfo','bufferConatinsThisData')  // if name includes # then omit info data.
   )
 
   // hex view
-    let hex = MBP.hex( pack )
+    let hex = MBP.hex( mbPack )
     prn('mbpHex', hex)
 
-  // base64 view
-    let b64 = pack.toString('base64')
-    prn('base64',b64)
 
+// unpack():  buffer -> object
+    let mbpObj = MBP.unpack( mbPack )
+    prnObj('mbpObj', mbpObj)
 
-  //unpack:  buffer -> object
-    let obj = MBP.unpack( pack )
-    prnObj('mbpObj', obj)
+    prn( 'mbpObj.v1', mbpObj.v1 )
+    prn( 'mbpObj.v2', mbpObj.v2 )
 
-    prn( 'obj.v4', obj.v4 )
-
+// MBA
   function packFunctionParams( ...args){
     return MBP.pack(  MBP.MBA(...args) )
   }
@@ -94,7 +105,8 @@
   evalBtn.addEventListener('click', e => {
     // console.log(code.value)
     result.value = ''
-    eval(code.value)
+    // eval(code.value)
+     Function( code.value )();
   })
 
   function prn(tag, v) {
