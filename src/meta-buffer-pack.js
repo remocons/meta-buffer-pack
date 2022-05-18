@@ -55,7 +55,7 @@ export function metaBuffer(name, typeOrData, initValue) {
   let buffer
   let bufferType = 'B'
   if (typeof typeOrData === 'number') {
-    if (initValue) {
+    if (typeof initValue === 'number') {  // initValue 0 should be passed.
       buffer = Buffer.alloc(typeOrData)
       buffer.fill(initValue)
       bufferType = 'B'

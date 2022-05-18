@@ -164,6 +164,34 @@ describe('MB : Meta Buffer', function () {
     })
   })
 
+  describe('for size and initvalue => MB( title, size , initvalue 0 ) ', function () {
+    const title = 'variableName'
+    const size = 32
+    const num = 0
+    const mb = MBP.MB(title, size, num)
+
+    describe('should return', function () {
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title)
+      })
+      it('mb[1] === "B"', function () {
+        assert.equal(mb[1], 'B')
+      })
+
+      it('mb[2].byteLength === size ', function () {
+        assert.equal(mb[2].byteLength, size)
+      })
+
+      it('mb[2] === bufferWithInitValue ', function () {
+        const bufferFilled = Buffer.alloc( size )
+        bufferFilled.fill(num )
+        console.log('filled', bufferFilled.toString('hex'))
+        console.log('mb[2]', mb[2].toString('hex'))
+        assert.ok( MBP.equal(mb[2],  bufferFilled )  )
+      })
+    })
+  })
+
   describe('for Number without initvalue => MB( title, number ) ', function () {
     const title = 'variableName'
     const num = 255
