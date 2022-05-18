@@ -11,3 +11,38 @@
   padding: 30px 20px;
   margin: 20px 0;
 }
+
+.buf{
+  /* font-family: monospace;
+  display: inline-block; */
+  margin: auto 0.2em;
+}
+.buf .hex{
+  font-family: monospace;
+  display: inline-block;
+  margin: auto 0.1em;
+}
+
+#view > span:nth-child(even) {
+  color: rgb(171, 50, 92);    
+}
+
+
+button{
+
+  border-radius: 5px;
+  font-size: 17px;
+  font-family: 'Source Sans Pro', sans-serif;
+  padding: 6px 18px;
+  color: #FFFFFF;
+  background-color: #4CAF50;
+  margin-bottom: 16px!important;
+  border: none;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
