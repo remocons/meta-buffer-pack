@@ -57,7 +57,7 @@ export function metaBuffer(name, typeOrData, initValue) {
   if (typeof typeOrData === 'number') {
     if (typeof initValue === 'number') {  // initValue 0 should be passed.
       buffer = Buffer.alloc(typeOrData)
-      buffer.fill(initValue)
+      if( initValue !== 0) buffer.fill(initValue)
       bufferType = 'B'
     } else {
       buffer = Buffer.from(String(typeOrData))
