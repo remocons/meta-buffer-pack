@@ -561,6 +561,10 @@ export function getMeta(binPack, showDetail = false) {
   }
 }
 
+export function rawPack( ...args){
+  return getBuffer( pack(...args) )
+}
+
 export function meta( ...args){
   return getMeta( pack(...args) )
 }
