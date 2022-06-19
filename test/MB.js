@@ -82,6 +82,23 @@ describe('MB : Meta Buffer', function () {
       })
     })
   })
+  describe('for String => MB( title,  object ) ', function () {
+    const title = 'variableName'
+    const obj = { greeting: 'hello 안녕하슈'}
+    const mb = MBP.MB(title, obj)
+
+    describe('should return', function () {
+      it('mb[0] === title', function () {
+        assert.equal(mb[0], title)
+      })
+      it('mb[1] === "O" ', function () {
+        assert.equal(mb[1], 'O')
+      })
+      it('mb[2] === JSON stringified and encoded buffer ', function () {
+        assert.ok(MBP.equal(mb[2], new TextEncoder().encode( JSON.stringify( obj ) )  ) )
+      })
+    })
+  })
 
   describe('for Typed Number => MB( title, type , number ) ', function () {
     const title = 'variableName'
