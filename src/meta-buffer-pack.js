@@ -232,15 +232,18 @@ export function pack(...args) {
   bufArr.forEach(bufPack => {
     const [name, type, data] = bufPack
     size += data.byteLength
+
     if (typeof name === 'number' || name.length > 0) {
-      if (type.includes('N') || type.includes('B') || type.includes('S') || type.includes('O')) {
-        info.push([name, type, offset, data.byteLength])
-      } else {
-        info.push([name, type, offset])
-      }
+    // MBA item use number type name.
+    // MB item use string type name.   null string means omit.
+    
+    // change to store more informative meta info.  
+    info.push([name, type, offset, data.byteLength]) 
+    
     }
     offset = size
   })
+
 
   let infoEncoded
   let infoSize
@@ -287,10 +290,22 @@ export function unpack(binPack, meta) {
 
   const buffer = Buffer.from(binPack)
   const binObj = {}
+  let readCounter = 0
   infoArr.forEach(bufPack => {
     const [name, type, offset, length] = bufPack
     binObj[name] = readTypedBuffer(type, buffer, offset, length)
+    // console.log( '###3 len',length )
+    if( length) readCounter += length
   })
+
+  // Can not define meta for variable size buffer 
+  // unpacker support automatic property to read left(did't read) buffers.
+  // console.log("######, unpack: buffer " , readCounter, buffer ,buffer.byteLength)
+  if(  meta && buffer.byteLength !== readCounter ){
+    let leftSize = buffer.byteLength - readCounter
+    // console.log('total,left buffer size', buffer.byteLength, leftSize )
+    binObj["$LEFT"] = readTypedBuffer('b', buffer, readCounter, leftSize)
+  }
 
   // set args with values
   if (binObj.$) {
@@ -547,13 +562,11 @@ export function getMeta(binPack, showDetail = false) {
 }
 
 export function meta( ...args){
- const tmpPack =  pack(...args)
-  return getMeta( tmpPack )
+  return getMeta( pack(...args) )
 }
 
 export function metaDetail( ...args){
- const tmpPack =  pack(...args)
-  return getMeta( tmpPack , true)
+  return getMeta( pack(...args) , true)
 }
 
 

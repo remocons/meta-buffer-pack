@@ -132,4 +132,14 @@ describe('Meta', function () {
 
 
 
+  describe('when Valid Meta Info(JSON) included)', function () {
+
+    const packWithInfo = MBP.pack(
+      MBP.MB('v32', '32', 0xffff ),
+      MBP.MB('I have Meta info', Buffer.from([1, 2, 3, 4]))
+    )
+  })
+
+
 })
+

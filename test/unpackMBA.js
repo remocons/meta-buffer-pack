@@ -29,7 +29,7 @@ describe('unpack MB+MBA or MBA only', function () {
       MBP.MBA('aaa','bbb') 
     )
     const mbaObject = MBP.unpack(pack)
-    console.log( mbaObject )
+    // console.log( mbaObject )
 
     
     it('should have property: args', function () {
@@ -49,15 +49,3 @@ describe('unpack MB+MBA or MBA only', function () {
 
 
 })
-
-function prn (tag, v) {
-  console.log(v)
-}
-function prnObj (tag, v) {
-  v = JSON.stringify(v, null, 2)
-  console.log(v)
-}
-
-function hex (title, data) {
-  console.log(title, MBP.hex(data))
-}
