@@ -192,15 +192,15 @@ export function readTypedBuffer(simpleType, buffer, offset, length) {
   else if (type === 'float_be') return buffer.readFloatBE(offset)
 
   else if (type === 'buffer') {
-    return buffer.slice(offset, offset + length)
+    return buffer.subarray(offset, offset + length)
   } else if (type === 'string') {
-    const strBuffer = buffer.slice(offset, offset + length)
+    const strBuffer = buffer.subarray(offset, offset + length)
     return decoder.decode(strBuffer)
   } else if (type === 'number') {
-    const strNumber = buffer.slice(offset, offset + length)
+    const strNumber = buffer.subarray(offset, offset + length)
     return Number(decoder.decode(strNumber))
   } else if (type === 'object') {
-    const objEncoded = buffer.slice(offset, offset + length)
+    const objEncoded = buffer.subarray(offset, offset + length)
     try {
       return JSON.parse(decoder.decode(objEncoded))
     } catch (error) {
