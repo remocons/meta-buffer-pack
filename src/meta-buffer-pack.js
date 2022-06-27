@@ -304,7 +304,7 @@ export function unpack(binPack, meta) {
   if(  meta && buffer.byteLength !== readCounter ){
     let leftSize = buffer.byteLength - readCounter
     // console.log('total,left buffer size', buffer.byteLength, leftSize )
-    binObj["$LEFT"] = readTypedBuffer('b', buffer, readCounter, leftSize)
+    binObj["$OTHERS"] = readTypedBuffer('b', buffer, readCounter, leftSize)
   }
 
   // set args with values

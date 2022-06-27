@@ -31,11 +31,11 @@ describe('Meta Automatic property', function () {
     let unpack = MBP.unpack( rawBuffer , meta)
     console.log( '######## unpack obj',unpack)
   
-    it('automatic property name $LEFT to read left buffer', function () {
-      assert.ok(  MBP.equal( unpack.$LEFT  , vBuffer ) ) 
+    it('automatic property name $OTHERS to read left buffer data', function () {
+      assert.ok(  MBP.equal( unpack.$OTHERS  , vBuffer ) ) 
     })
-    it('automatic property name $LEFT : same buffer size', function () {
-      assert.ok(  unpack.$LEFT.byteLength === variableBufferSize) 
+    it('automatic property name $OTHERS : same buffer size', function () {
+      assert.ok(  unpack.$OTHERS.byteLength === variableBufferSize) 
     })
 
 
