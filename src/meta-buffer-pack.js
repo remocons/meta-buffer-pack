@@ -110,8 +110,6 @@ export function metaBufferArguments(...args) {
       }
     })
 
-  // add parameter length. limit 255.
-  mba.push(MB('$', '8', mba.length))
   return mba
 }
 
@@ -249,7 +247,9 @@ export function pack(...args) {
   let infoSize
 
   if (info.length > 0) {
-    infoEncoded = encoder.encode(JSON.stringify(info))
+    let infoStr = JSON.stringify(info)
+    // console.log('pack infoStr , size:', infoStr , infoStr.length )
+    infoEncoded = encoder.encode(infoStr)
     infoSize = infoEncoded.byteLength
     size = size + infoSize + 2
   }
@@ -307,16 +307,18 @@ export function unpack(binPack, meta) {
     binObj["$OTHERS"] = readTypedBuffer('b', buffer, readCounter, leftSize)
   }
 
-  // set args with values
-  if (binObj.$) {
-    const argLen = binObj.$
-    const args = []
-    for (let n = 0; n < argLen; n++) {
-      args.push(binObj[n])
-    }
-    binObj.args = args
-    binObj.$ = binObj.args // alias
+  // set args with values if exist.
+  let mbaIndex = 0;
+  let args = [];
+  while( binObj[mbaIndex]){
+    args.push( binObj[mbaIndex++])
   }
+  
+  if( args.length > 0 ) {
+    binObj.args = args 
+    binObj.$ = binObj.args 
+  }
+
   return binObj
 
 }
