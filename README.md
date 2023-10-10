@@ -244,7 +244,7 @@ console.log( mboMix.args[1] ) // "a2"
 
 
 
-## Teminology
+## Terminology
 
 - `MB`: Meta Buffer :  [ "name", "type", < buffer > ] :Array
   - name : string : user defined variable name.
@@ -281,4 +281,4 @@ You can simply evaluate some test code by online page.
 
 
 ### license
-[MIT](LICENSE) Dongeun Lee 이동은 <sixgen@gmail.com>
+[MIT](LICENSE)
