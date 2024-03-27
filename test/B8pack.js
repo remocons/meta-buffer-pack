@@ -17,7 +17,6 @@ describe('B8pack', function () {
 
       it('Number return one byte with init value. max value is 255', function () {
         const pack = MBP.B8pack( 1,255, 256, 257  )
-        console.log(pack)
         assert.equal(pack.toString('hex'), '01ff0001')  // 255-> 255(0xff)  256 -> 0  257 -> 1
       })
 
@@ -42,7 +41,6 @@ describe('B8pack', function () {
       it('multiple arguments will return one merged buffer', function () {
         const pack = MBP.B8pack("head", 1,2  )
         //same result: Buffer.concat([ Buffer.from('head'), Buffer.from([1,2,3])] )
-        console.log(pack)
         assert.equal(pack.toString('hex'), '686561640102') 
       })
     })

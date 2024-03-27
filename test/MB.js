@@ -202,8 +202,8 @@ describe('MB : Meta Buffer', function () {
       it('mb[2] === bufferWithInitValue ', function () {
         const bufferFilled = Buffer.alloc( size )
         bufferFilled.fill(num )
-        console.log('filled', bufferFilled.toString('hex'))
-        console.log('mb[2]', mb[2].toString('hex'))
+        // console.log('filled', bufferFilled.toString('hex'))
+        // console.log('mb[2]', mb[2].toString('hex'))
         assert.ok( MBP.equal(mb[2],  bufferFilled )  )
       })
     })

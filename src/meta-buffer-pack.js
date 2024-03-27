@@ -3,7 +3,6 @@ export { Buffer } // for iife reference MBP.Buffer
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-
 export const NB = numberBuffer
 export function numberBuffer(type, initValue = 0) {
   let buffer
@@ -57,7 +56,7 @@ export function metaBuffer(name, typeOrData, initValue) {
   if (typeof typeOrData === 'number') {
     if (typeof initValue === 'number') {  // initValue 0 should be passed.
       buffer = Buffer.alloc(typeOrData)
-      if( initValue !== 0) buffer.fill(initValue)
+      if (initValue !== 0) buffer.fill(initValue)
       bufferType = 'B'
     } else {
       buffer = Buffer.from(String(typeOrData))
@@ -173,46 +172,47 @@ export function parseTypeName(type) {
 }
 
 export function readTypedBuffer(simpleType, buffer, offset, length) {
+  try {
+    const type = parseTypeName(simpleType)
+    if (type == 'int8') return buffer.readInt8(offset)
+    else if (type === 'uint8') return buffer.readUint8(offset)
+    else if (type === 'int16_le') return buffer.readInt16LE(offset)
+    else if (type === 'int16_be') return buffer.readInt16BE(offset)
+    else if (type === 'uint16_le') return buffer.readUint16LE(offset)
+    else if (type === 'uint16_be') return buffer.readUint16BE(offset)
+    else if (type === 'int32_le') return buffer.readInt32LE(offset)
+    else if (type === 'int32_be') return buffer.readInt32BE(offset)
+    else if (type === 'uint32_le') return buffer.readUint32LE(offset)
+    else if (type === 'uint32_be') return buffer.readUint32BE(offset)
+    else if (type === 'float_le') return buffer.readFloatLE(offset)
+    else if (type === 'float_be') return buffer.readFloatBE(offset)
 
-  const type = parseTypeName(simpleType)
-
-  if (type == 'int8') return buffer.readInt8(offset)
-  else if (type === 'uint8') return buffer.readUint8(offset)
-  else if (type === 'int16_le') return buffer.readInt16LE(offset)
-  else if (type === 'int16_be') return buffer.readInt16BE(offset)
-  else if (type === 'uint16_le') return buffer.readUint16LE(offset)
-  else if (type === 'uint16_be') return buffer.readUint16BE(offset)
-  else if (type === 'int32_le') return buffer.readInt32LE(offset)
-  else if (type === 'int32_be') return buffer.readInt32BE(offset)
-  else if (type === 'uint32_le') return buffer.readUint32LE(offset)
-  else if (type === 'uint32_be') return buffer.readUint32BE(offset)
-  else if (type === 'float_le') return buffer.readFloatLE(offset)
-  else if (type === 'float_be') return buffer.readFloatBE(offset)
-
-  else if (type === 'buffer') {
-    return buffer.subarray(offset, offset + length)
-  } else if (type === 'string') {
-    const strBuffer = buffer.subarray(offset, offset + length)
-    return decoder.decode(strBuffer)
-  } else if (type === 'number') {
-    const strNumber = buffer.subarray(offset, offset + length)
-    return Number(decoder.decode(strNumber))
-  } else if (type === 'object') {
-    const objEncoded = buffer.subarray(offset, offset + length)
-    try {
+    else if (type === 'buffer') {
+      return buffer.subarray(offset, offset + length)
+    } else if (type === 'string') {
+      const strBuffer = buffer.subarray(offset, offset + length)
+      return decoder.decode(strBuffer)
+    } else if (type === 'number') {
+      const strNumber = buffer.subarray(offset, offset + length)
+      return Number(decoder.decode(strNumber))
+    } else if (type === 'object') {
+      const objEncoded = buffer.subarray(offset, offset + length)
       return JSON.parse(decoder.decode(objEncoded))
-    } catch (error) {
-      console.log('err. obj parse')
+    } else if (type === 'boolean') {
+      const v = buffer.readInt8(offset)
+      return v === 1
+    } else {
+      return
     }
-  } else if (type === 'boolean') {
-    const v = buffer.readInt8(offset)
-    return v === 1
-  } else {
-    throw TypeError('invalid data')
+  } catch (error) {
+    // console.log('MBP:readTypedBuffer obj decoding error.', error)
   }
+  // any error and invalid data return undefined 
+  return
 }
 
-function flatSubArray(args) {
+// to join MBA or MB meta list.
+function flatArray(args) {
   let subArr = []
   const mainArr = args.filter(item => {
     if (Array.isArray(item[0])) subArr = subArr.concat(item)
@@ -222,7 +222,8 @@ function flatSubArray(args) {
 }
 
 export function pack(...args) {
-  const bufArr = flatSubArray(args)
+  const bufArr = flatArray(args)
+  // console.log('MBP.pack: flat MB or MBA list', bufArr)
   let size = 0
   const info = []
   let offset = 0
@@ -232,17 +233,17 @@ export function pack(...args) {
     size += data.byteLength
 
     if (typeof name === 'number' || name.length > 0) {
-    // MBA item use number type name.
-    // MB item use string type name.   null string means omit.
-    
-    // change to store more informative meta info.  
-    info.push([name, type, offset, data.byteLength]) 
-    
+      // if the item has property name then add meta JSON info.
+      // type of name is Number in MBA.(index number)
+      // type of name is String in MB. except null string.
+      // add additional informative meta info.  
+      info.push([name, type, offset, data.byteLength])
     }
     offset = size
   })
 
 
+  // console.log('MBP.pack meta:', info )
   let infoEncoded
   let infoSize
 
@@ -293,36 +294,36 @@ export function unpack(binPack, meta) {
   let readCounter = 0
   infoArr.forEach(bufPack => {
     const [name, type, offset, length] = bufPack
-    binObj[name] = readTypedBuffer(type, buffer, offset, length)
-    // console.log( '###3 len',length )
-    if( length) readCounter += length
+    let result = readTypedBuffer(type, buffer, offset, length)
+    if (result == undefined) return
+    binObj[name] = result
+    if (length) readCounter += length
   })
 
   // Can not define meta for variable size buffer 
   // unpacker support automatic property to read left(did't read) buffers.
   // console.log("######, unpack: buffer " , readCounter, buffer ,buffer.byteLength)
-  if(  meta && buffer.byteLength !== readCounter ){
+  if (meta && buffer.byteLength !== readCounter) {
     let leftSize = buffer.byteLength - readCounter
     // console.log('total,left buffer size', buffer.byteLength, leftSize )
-    binObj["$OTHERS"] = readTypedBuffer('b', buffer, readCounter, leftSize)
+    let result = readTypedBuffer('b', buffer, readCounter, leftSize)
+    if (result == undefined) return
+    binObj["$OTHERS"] = result
   }
 
   // set args with values if exist.
   let mbaIndex = 0;
   let args = [];
-  while( binObj[mbaIndex]){
-    args.push( binObj[mbaIndex++])
-  }
-  
-  if( args.length > 0 ) {
-    binObj.args = args 
-    binObj.$ = binObj.args 
+  while (binObj[mbaIndex]) {
+    args.push(binObj[mbaIndex++])
   }
 
+  if (args.length > 0) {
+    binObj.args = args
+    binObj.$ = binObj.args
+  }
   return binObj
-
 }
-
 
 
 export const U8 = parseUint8Array   //alias
@@ -363,13 +364,12 @@ export function parseUint8Array(data, shareArrayBuffer = false) {
 }
 
 export const B8 = parseBuffer
-
 export function parseBuffer(data, shareArrayBuffer = false) {
 
   const u8 = parseUint8Array(data, shareArrayBuffer)
-  if( shareArrayBuffer){
-    return Buffer.from( u8.buffer, u8.byteOffset, u8.byteLength )
-  }else{
+  if (shareArrayBuffer) {
+    return Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength)
+  } else {
     return Buffer.from(u8)
   }
 }
@@ -377,7 +377,7 @@ export function parseBuffer(data, shareArrayBuffer = false) {
 export const B8pack = parseBufferThenConcat
 export function parseBufferThenConcat(...dataArray) {
   const buffers = dataArray.map(data => parseBuffer(data))
-  return Buffer.concat( buffers)
+  return Buffer.concat(buffers)
 }
 
 
@@ -418,15 +418,12 @@ export function equal(buf1, buf2) {
 }
 
 
-
-
 export function getBufferSize(binPack) {
   if (getMetaSize(binPack) === 0) {
     return binPack.byteLength
   } else {
     return binPack.byteLength - getMetaSize(binPack) - TAIL_LEN
   }
-
 }
 
 // MB and MBA 
@@ -447,7 +444,7 @@ export function parseMetaInfo(binPack, infoSize) {
     if (firstItem.length < 3) return
     const [name, type, offset] = firstItem
 
-    if ( typeof type !== 'string' || typeof offset !== 'number') return
+    if (typeof type !== 'string' || typeof offset !== 'number') return
 
     return info
   } catch (error) {
@@ -469,9 +466,9 @@ export const TAIL_LEN = 2
  * @returns {Number} last two byte value( read Uint16 bigendian )
  */
 export function readTail(binPack) {
-  if( binPack instanceof ArrayBuffer ){
+  if (binPack instanceof ArrayBuffer) {
     binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
-  } 
+  }
   if (binPack instanceof Uint8Array) {
     if (binPack.byteLength <= TAIL_LEN) return 0
 
@@ -492,9 +489,9 @@ export function readTail(binPack) {
 // This function don't use Buffer method.
 
 export function getMetaSize(binPack) {
-  if( binPack instanceof ArrayBuffer ){
+  if (binPack instanceof ArrayBuffer) {
     binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
-  } 
+  }
   if (binPack instanceof Uint8Array) {
 
     const size = binPack.byteLength
@@ -508,7 +505,7 @@ export function getMetaSize(binPack) {
     //3. return success: jsonInfoSize,  fail: 0
     if (success) return infoSize
     else return 0
-  }else{
+  } else {
     return 0
   }
 }
@@ -534,9 +531,9 @@ export function getBuffer(binPack) {
  * @returns {Object|undefined} success: return MetaInfo Object.   fail: return undefined.(No valid JSON included.)
  */
 export function getMeta(binPack, showDetail = false) {
-  if( binPack instanceof ArrayBuffer ){
+  if (binPack instanceof ArrayBuffer) {
     binPack = Buffer.from(binPack) // creates a view for ArrayBuffer, without copying.
-  } 
+  }
   const infoSize = readTail(binPack)
   if (infoSize === 0) return
 
@@ -563,19 +560,17 @@ export function getMeta(binPack, showDetail = false) {
   }
 }
 
-export function rawPack( ...args){
-  return getBuffer( pack(...args) )
+export function rawPack(...args) {
+  return getBuffer(pack(...args))
 }
 
-export function meta( ...args){
-  return getMeta( pack(...args) )
+export function meta(...args) {
+  return getMeta(pack(...args))
 }
 
-export function metaDetail( ...args){
-  return getMeta( pack(...args) , true)
+export function metaDetail(...args) {
+  return getMeta(pack(...args), true)
 }
-
-
 
 export function getMetaDetail(binPack) {
   return getMeta(binPack, true)

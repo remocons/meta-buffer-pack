@@ -29,7 +29,6 @@ describe('Meta Automatic property', function () {
     )   
 
     let unpack = MBP.unpack( rawBuffer , meta)
-    console.log( '######## unpack obj',unpack)
   
     it('automatic property name $OTHERS to read left buffer data', function () {
       assert.ok(  MBP.equal( unpack.$OTHERS  , vBuffer ) ) 

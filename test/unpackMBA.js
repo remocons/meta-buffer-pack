@@ -1,5 +1,5 @@
 import assert from 'assert/strict'
-import { MBP, Buffer } from '../src/index.js'
+import { MBP } from '../src/index.js'
 
 describe('unpack MB+MBA or MBA only', function () {
 
@@ -29,8 +29,6 @@ describe('unpack MB+MBA or MBA only', function () {
       MBP.MBA('aaa','bbb') 
     )
     const mbaObject = MBP.unpack(pack)
-    // console.log( mbaObject )
-
     
     it('should have property: args', function () {
       assert.ok(  mbaObject.args )
@@ -46,6 +44,41 @@ describe('unpack MB+MBA or MBA only', function () {
 
   })
 
+  describe('mixed MBA: object and text', function () {
+    const pack = MBP.pack(
+      MBP.MBA({a:1},'hello') 
+    )
+    const mbaObject = MBP.unpack(pack)
+
+    it('should equal object values', function () {
+      assert.equal(  mbaObject.$[0].a, 1  ) 
+    })
+    it('should equal text values', function () {
+      assert.equal(  mbaObject.$[1], 'hello'  ) 
+    })
+
+  })
+
+  describe('mixed MBA: object and buffer', function () {
+    const buffer = new Uint8Array(12)
+    const pack = MBP.pack(
+      MBP.MB('counter','32',0xffff),
+      MBP.MBA({a:1}, buffer) 
+    )
+    const mbaObject = MBP.unpack(pack)
+
+    it('should equal object values', function () {
+      assert.equal(  mbaObject.$[0].a, 1  ) 
+    })
+    it('should equal buffers', function () {
+      assert.ok(MBP.equal(mbaObject.$[1], buffer ))
+    })
+
+    it('should equal prop values', function () {
+      assert.equal(  mbaObject.counter, 0xffff  ) 
+    })
+
+  })
 
 
 })
