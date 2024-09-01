@@ -1,6 +1,6 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
-import MBP from 'meta-buffer-pack'
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
+let MBP = require( 'meta-buffer-pack')
 
 describe('unpack MB+MBA or MBA only', function () {
 

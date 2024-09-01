@@ -93,15 +93,10 @@ prn(' -','added addtional data.')
   result:</textarea>
 
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/meta-buffer-pack@1/dist/meta-buffer-pack.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/meta-buffer-pack@2.0.0/dist/meta-buffer-pack.iife.js'></script>
 <script >
   const Buffer = MBP.Buffer;
-
-  const NB = MBP.NB;
-  const MB = MBP.MB;
-  const MBA = MBP.MBA;
-
+  
   evalBtn.addEventListener('click', e => {
     // console.log(code.value)
     result.value = ''
@@ -118,6 +113,11 @@ prn(' -','added addtional data.')
     result.value += "\n" +tag + ": " + v 
     console.log(v)
   }
+</script>
+
+<script type="module" >
+  import MBP from 'https://cdn.jsdelivr.net/npm/meta-buffer-pack@2.0.0/dist/meta-buffer-pack.js'
+  console.log('ESM loaded. buffer: ', MBP.Buffer.from('hello'))
 </script>
 
 </html>

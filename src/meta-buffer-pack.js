@@ -1,7 +1,9 @@
 import { Buffer } from 'buffer/index.js'
-export { Buffer } // for iife reference MBP.Buffer
+export { Buffer } 
+
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
+
 
 export const NB = numberBuffer
 export function numberBuffer(type, initValue = 0) {

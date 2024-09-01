@@ -1,53 +1,49 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import { terser } from 'rollup-plugin-terser'
-import pkg from './package.json'
+import terser from '@rollup/plugin-terser'
 
 export default [
   {
     input: './src/index.js',
     output: [
-      {  
-      file: pkg.browser_esm,  // Use modern ES Module!
-      format: 'es', 
-      name: 'MBP',
-      sourcemap: true  
-    }  
-  
-  ],
+      { 
+        file: "./dist/meta-buffer-pack.cjs", 
+        format: 'cjs' 
+      },
+      // { 
+      //   file: "./dist/meta-buffer-pack.mjs", 
+      //   format: 'es' 
+      // },
+    ],
     plugins: [
-      resolve(),
-      commonjs() 
-      ,terser() 
-    ] 
-  },
-  {
-    input: './src/index-iife.js',
-    output: [
-      {
-      file: pkg.browser,
-      format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-      name: 'MBP',
-      sourcemap: true
-    }  
-  
-  ],
-    plugins: [
-      resolve(),
-      commonjs() 
-      ,terser() 
+      resolve({
+        preferBuiltins: true
+      }),
+      commonjs()
+      , terser()
     ]
   },
   {
     input: './src/index.js',
     output: [
-      { file: pkg.cjs, format: 'cjs' },
-      { file: pkg.esm, format: 'es' }
-      ], 
+      {
+        file: "./dist/meta-buffer-pack.iife.js",
+        format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+        name: 'MBP',
+        sourcemap: true
+      },
+      {
+        file: "./dist/meta-buffer-pack.js",
+        format: 'es',
+        sourcemap: true
+      }
+    ],
     plugins: [
-      resolve(), 
-      commonjs() 
-      ,terser() 
+      resolve({
+        preferBuiltins: false
+      }),
+      commonjs()
+      , terser()
     ]
   }
 

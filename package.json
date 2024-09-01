@@ -1,28 +1,22 @@
 {
   "name": "meta-buffer-pack",
-  "version": "1.4.0",
-  "description": "Meta Buffer Pack",
-  "main": "./src/index.js",
+  "version": "2.0.0",
+  "description": "A metadata bundler that automatically restores data types and names.",
   "type": "module",
   "exports": {
-    "import": "./src/index.js",
+    "import": "./dist/meta-buffer-pack.js",
     "require": "./dist/meta-buffer-pack.cjs"
   },
-  "browser": "./dist/meta-buffer-pack.min.js",
-  "browser_esm": "./dist/meta-buffer-pack.esm.js",
-  "cjs": "./dist/meta-buffer-pack.cjs",
-  "esm": "./dist/meta-buffer-pack.mjs",
+  "browser": "./dist/meta-buffer-pack.js",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.1.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
-    "mocha": "^10.2.0",
-    "rollup": "^2.79.1",
-    "rollup-plugin-terser": "^7.0.2"
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.21.2"
   },
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "mocha"
+    "test": "node --test"
   },
   "keywords": [
     "buffer",
@@ -37,8 +31,8 @@
     "url": "https://github.com/remocons/meta-buffer-pack.git"
   },
   "author": {
-    "name": "Lee Dongeun",
-    "email": "sixgen@gmail.com"
+    "name": "Lee Taeo",
+    "email": "taeo.mocha@gmail.com"
   },
   "license": "MIT",
   "dependencies": {

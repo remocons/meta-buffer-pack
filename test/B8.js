@@ -1,6 +1,6 @@
-
-import assert from 'assert/strict'
-import { MBP } from '../src/index.js'
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import MBP from 'meta-buffer-pack'
 
 describe('B8', function () {
   describe('should return nodeJS Buffer', function () {

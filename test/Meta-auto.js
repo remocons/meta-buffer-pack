@@ -1,10 +1,8 @@
-import assert from 'assert/strict'
-import { MBP, Buffer } from '../src/index.js'
-
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import MBP from 'meta-buffer-pack'
 
 describe('Meta Automatic property', function () {
-
-
 
   describe('unpack raw buffer using meta', function () {
 

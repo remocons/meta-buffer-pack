@@ -1,16 +1,26 @@
-# Meta Buffer Pack
+# Meta Buffer Pack(MBP)
 
+A metadata bundler that automatically restores data types and names.
 
-`Meta Buffer Pack` : A binary data packaging helper.
+It combines the name and type of complex data into a single buffer and restores the original data. It allows you to store complex typed data or transmit it over the internet or serial communication, and automatically restores the original data.
+
+## Meta buffer
+
+`Meta buffer` refers to a data structure that encapsulates additional information about data, beyond just the raw data itself. It includes:
+
+	1.	Name: A descriptor or identifier for the data.
+	2.	Type: The data type (e.g. uint32_le, string, object, number, buffer).
+	3.	Buffer: The actual binary data or content.
+
 
 ## features
-- pack : multiple meta-buffers into one buffer.
-- unpack : parse meta-buffer-pack buffer into one Object(MBO).
-- MBA: bundle function arguments as a buffer.
-- It contains [ Node's Buffer](https://www.npmjs.com/package/buffer).  It's useful in the web browser.
+-	pack: Combine multiple meta-buffers into a single buffer.
+-	unpack: Parse a meta-buffer pack into an Object (MBO).
+-	MBA: Bundle function arguments into a buffer.
+-	Includes a Node.js-compatible Buffer, enabling convenient buffer manipulation in the browser.
 
 ## Support 
-- Node: CJS (require), ESM (import),  
+- Node.js: CJS (require), ESM (import),  
 - browser: IIFE, ESM.
 
 
@@ -23,29 +33,24 @@ npm i meta-buffer-pack
 ```
 
 ```js
-// Node ES Module
-import { MBP } from 'meta-buffer-pack'
+// ESM
+import MBP from 'meta-buffer-pack'
 
-// Node commonJS
-const { MBP } = require('meta-buffer-pack')
+// CommonJS
+const MBP = require('meta-buffer-pack')
 
 ```
 
 
 ### Browser
 
-### use script tag  (IIFE)
+#### IIFE(use script tag)
 
-- You can find mata-buffer-pack.min.js file in the dist/ folder.
+- You can find './dist/mata-buffer-pack.iife.js' file.
 - You can use CDN: [jsdelivr](https://www.jsdelivr.com/package/npm/meta-buffer-pack)  
-
 ```html
-/* 1. load script first */
-<script src="./path/meta-buffer-pack.min.js"></script>
 
-/* or you can use global CDN url */
-<script src="https://cdn.jsdelivr.net/npm/meta-buffer-pack@1/dist/meta-buffer-pack.min.js"></script>
-
+<script src="./dist/meta-buffer-pack.iife.js"></script>
 <script>
   // 2. Use global reference name: MBP 
   // 3. Use MBP.Buffer for Node Buffer.
@@ -54,11 +59,13 @@ const { MBP } = require('meta-buffer-pack')
 ```
 
 
-### Browser ES Module. 
+#### ES Module
 
 ```js
-// Do not forget the file path and extension '.js'
-import { MBP, Buffer } from './path/meta-buffer-pack.esm.js'
+<script type="module">
+  // Do not forget the file path and extension '.js'
+  import MBP from './dist/meta-buffer-pack.js'
+</script>
 
 ```
 
@@ -282,3 +289,25 @@ You can simply evaluate some test code by online page.
 
 ### license
 [MIT](LICENSE)
+
+## changelog Update
+
+### v2.0.0 : **Breaking Changes**
+- It has been changed from `named export` to `export default`.
+```
+  // v1.x.x  needs curly braces for named exports.
+    import { MBP, Buffer } from 'meta-buffer-pack'  // ESM
+    const {MBP} = require('meta-buffer-pack')       // CommonJS
+
+  // v2.0.0  doesn't need curly braces for default.
+    import MBP from 'meta-buffer-pack'        // ESM
+    // MBP.Buffer
+    const MBP = require('meta-buffer-pack')   // CommonJS
+```
+- dist/filename change
+  - IIFE for browser
+    - v1.4.0: meta-buffer-pack.min.js
+    - v2.0.0: `meta-buffer-pack.iife.js`
+  - ESM for browser
+    - v1.4.0: meta-buffer-pack.esm.js
+    - v2.0.0: `meta-buffer-pack.js`
