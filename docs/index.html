@@ -35,7 +35,7 @@
     let pureBuffer = MBP.pack(
       MBP.MB('#v1','16',15),  // Uint16 
       MBP.MB('#v2','i16',-15),  //Int16
-      MBP.MB('','32', 0x11223344),  // Uint32 BegEndian
+      MBP.MB('','32', 0x11223344),  // Uint32 BigEndian
       MBP.MB('','32L', 0x11223344)  // Uint32 LittleEndian
     )
     
@@ -50,7 +50,7 @@ prn(' -','added addtional data.')
   let mbPack = MBP.pack(
     MBP.MB('v1','16',15),  // Uint16 
     MBP.MB('v2','i16',-15),  //Int16
-    MBP.MB('v3','32', 0x11223344),  // Uint32 BegEndian
+    MBP.MB('v3','32', 0x11223344),  // Uint32 BigEndian
     MBP.MB('v4','32L', 0x11223344),   // Uint32 LittleEndian
     MBP.MB('vStr','abcde'),  // buffer string
   )
