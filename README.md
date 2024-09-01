@@ -284,7 +284,7 @@ please check example/ folder. There are commonJS and ES Module example code.
 ### online demo
 You can simply evaluate some test code by online page.  
 
-- [demo link](https://remocons.github.io/meta-buffer-pack/example/index.html)
+- [demo link](https://remocons.github.io/meta-buffer-pack/index.html)
 
 
 ### license
