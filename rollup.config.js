@@ -9,11 +9,7 @@ export default [
       { 
         file: "./dist/meta-buffer-pack.cjs", 
         format: 'cjs' 
-      },
-      // { 
-      //   file: "./dist/meta-buffer-pack.mjs", 
-      //   format: 'es' 
-      // },
+      }
     ],
     plugins: [
       resolve({
@@ -28,7 +24,7 @@ export default [
     output: [
       {
         file: "./dist/meta-buffer-pack.iife.js",
-        format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+        format: 'iife',
         name: 'MBP',
         sourcemap: true
       },

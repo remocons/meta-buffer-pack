@@ -1,6 +1,6 @@
 {
   "name": "meta-buffer-pack",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A metadata bundler that automatically restores data types and names.",
   "type": "module",
   "exports": {
