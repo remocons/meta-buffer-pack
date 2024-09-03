@@ -23,8 +23,8 @@ export default [
     input: './src/index.js',
     output: [
       {
-        file: "./dist/meta-buffer-pack.iife.js",
-        format: 'iife',
+        file: "./dist/meta-buffer-pack.min.js",
+        format: 'umd',
         name: 'MBP',
         sourcemap: true
       },

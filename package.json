@@ -1,13 +1,15 @@
 {
   "name": "meta-buffer-pack",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A metadata bundler that automatically restores data types and names.",
   "type": "module",
   "exports": {
     "import": "./dist/meta-buffer-pack.js",
     "require": "./dist/meta-buffer-pack.cjs"
   },
-  "browser": "./dist/meta-buffer-pack.js",
+  "browser": "./dist/meta-buffer-pack.min.js",
+  "jsdelivr": "./dist/meta-buffer-pack.min.js",
+  "unpkg": "./dist/meta-buffer-pack.min.js",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",

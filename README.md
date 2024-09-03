@@ -46,11 +46,11 @@ const MBP = require('meta-buffer-pack')
 
 #### IIFE(use script tag)
 
-- You can find './dist/mata-buffer-pack.iife.js' file.
+- You can find './dist/mata-buffer-pack.min.js' file.
 - You can use CDN: [jsdelivr](https://www.jsdelivr.com/package/npm/meta-buffer-pack)  
 ```html
 
-<script src="./dist/meta-buffer-pack.iife.js"></script>
+<script src="./dist/meta-buffer-pack.min.js"></script>
 <script>
   // 2. Use global reference name: MBP 
   // 3. Use MBP.Buffer for Node Buffer.
@@ -299,15 +299,8 @@ You can simply evaluate some test code by online page.
     import { MBP, Buffer } from 'meta-buffer-pack'  // ESM
     const {MBP} = require('meta-buffer-pack')       // CommonJS
 
-  // v2.0.0  doesn't need curly braces for default.
+  // v2.0.x  doesn't need curly braces for default.
     import MBP from 'meta-buffer-pack'        // ESM
     // MBP.Buffer
     const MBP = require('meta-buffer-pack')   // CommonJS
 ```
-- dist/filename change
-  - IIFE for browser
-    - v1.4.0: meta-buffer-pack.min.js
-    - v2.0.0: `meta-buffer-pack.iife.js`
-  - ESM for browser
-    - v1.4.0: meta-buffer-pack.esm.js
-    - v2.0.0: `meta-buffer-pack.js`
