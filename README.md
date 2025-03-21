@@ -20,8 +20,8 @@ It combines the name and type of complex data into a single buffer and restores 
 -	Includes a Node.js-compatible Buffer, enabling convenient buffer manipulation in the browser.
 
 ## Support 
-- Node.js: CJS (require), ESM (import),  
-- browser: IIFE, ESM.
+- Node.js: CJS, ESM  
+- browser: UMD/IIFE, ESM
 
 
 ## Usage
@@ -44,7 +44,7 @@ const MBP = require('meta-buffer-pack')
 
 ### Browser
 
-#### IIFE(use script tag)
+#### UMD/IIFE
 
 - You can find './dist/mata-buffer-pack.min.js' file.
 - You can use CDN: [jsdelivr](https://www.jsdelivr.com/package/npm/meta-buffer-pack)  
