@@ -81,13 +81,13 @@ const MBP = require('meta-buffer-pack')
 
   let pack = MBP.pack(
     // typed number. strict byteLength & Endian.
-    MBP.MB('anyName','8',123),  // uint8 (default. Unsgined, BigEndian)
-    MBP.MB('v2','i16',-31234),  //int16 ( Signed value include i)
-    MBP.MB('v3','16L', 0x1234),  //Uint16 ( LittleEndian include L)
+    MBP.MB('anyName','8',123),  // uint8 (default. Unsigned, BigEndian)
+    MBP.MB('v2','i16',-31234),  // int16 ( Signed value include i)
+    MBP.MB('v3','16L', 0x1234),  // Uint16 ( LittleEndian include L)
     MBP.MB('v4','32', 4200000000),   // uint32
     MBP.MB('pi','f', 3.141592),   // float as 4bytes buffer
 
-    // Nnumbers
+    // Numbers
     MBP.MB('v5','n', 123.456),   //  Number as string buffer (include float number.)
     MBP.MB('numberString', 123.456),   // MB('name', number) same with above. wihtout 3rd parameter. it's stored number as string.
 
