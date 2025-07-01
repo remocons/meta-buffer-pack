@@ -1,8 +1,11 @@
 # Meta Buffer Pack(MBP)
 
-A metadata bundler that automatically restores data types and names.
+MetaBufferPack: Master Binary Data Serialization & Deserialization with Metadata
+MetaBufferPack is a powerful JavaScript library that provides efficient serialization and deserialization of diverse data types into and from binary formats. This module excels by packing not just data, but also metadata like names, types, and positions, making it exceptionally easy to manage complex, structured binary data.
 
-It combines the name and type of complex data into a single buffer and restores the original data. It allows you to store complex typed data or transmit it over the internet or serial communication, and automatically restores the original data.
+It supports virtually all major JavaScript data types, including numbers (integers, floats), strings, objects, Buffers, TypedArrays, and booleans. Crucially, it offers both Little Endian and Big Endian handling for 16-bit and 32-bit integers, as well as floating-point numbers. With flexible functions like numberBuffer and metaBuffer, you can effortlessly create buffers with specific types and values, significantly simplifying binary data management.
+
+Streamline your data storage and transmission efficiency with MetaBufferPack!
 
 ## Meta buffer
 
@@ -290,17 +293,4 @@ You can simply evaluate some test code by online page.
 ### license
 [MIT](LICENSE)
 
-## changelog Update
 
-### v2.0.0 : **Breaking Changes**
-- It has been changed from `named export` to `export default`.
-```
-  // v1.x.x  needs curly braces for named exports.
-    import { MBP, Buffer } from 'meta-buffer-pack'  // ESM
-    const {MBP} = require('meta-buffer-pack')       // CommonJS
-
-  // v2.0.x  doesn't need curly braces for default.
-    import MBP from 'meta-buffer-pack'        // ESM
-    // MBP.Buffer
-    const MBP = require('meta-buffer-pack')   // CommonJS
-```

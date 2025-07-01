@@ -38,9 +38,8 @@ export default [
       resolve({
         preferBuiltins: false
       }),
-      commonjs()
-      , terser()
+      commonjs(),
+      terser()
     ]
   }
-
 ]

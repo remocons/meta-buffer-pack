@@ -1,7 +1,7 @@
 {
   "name": "meta-buffer-pack",
-  "version": "2.0.6",
-  "description": "A metadata bundler that automatically restores data types and names.",
+  "version": "2.1.0",
+  "description": "Master Binary Data Serialization & Deserialization with Metadata.",
   "type": "module",
   "exports": {
     "import": "./dist/meta-buffer-pack.js",
@@ -10,11 +10,14 @@
   "browser": "./dist/meta-buffer-pack.min.js",
   "jsdelivr": "./dist/meta-buffer-pack.min.js",
   "unpkg": "./dist/meta-buffer-pack.min.js",
+  "types": "./dist/meta-buffer-pack.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.36.0"
+    "@types/node": "^24.0.8",
+    "rollup": "^4.36.0",
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "build": "rollup -c",

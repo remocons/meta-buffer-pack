@@ -6,6 +6,13 @@ const decoder = new TextDecoder()
 
 
 export const NB = numberBuffer
+/**
+ * Create a typed buffer with a specific type and initial value
+ * @param {string} type - Buffer type (8, 16, 32, F, N)
+ * @param {number} [initValue=0] - Initial value for the buffer
+ * @returns {Buffer} Typed buffer
+ * @throws {TypeError} If invalid type or initValue is provided
+ */
 export function numberBuffer(type, initValue = 0) {
   let buffer
   if (type === undefined || typeof type !== 'string' || typeof initValue !== 'number') {
@@ -52,6 +59,14 @@ export function numberBuffer(type, initValue = 0) {
 
 
 export const MB = metaBuffer
+/**
+ * Create a meta buffer with name, type, and initial value
+ * @param {string} name - Name of the buffer
+ * @param {number|string|Uint8Array|ArrayBuffer|Object|boolean} typeOrData - Data type or value
+ * @param {number|string|undefined} [initValue] - Initial value for numeric types
+ * @returns {[string, string, Buffer]} metaBufferTuple containing name, buffer type, and buffer
+ * @throws {TypeError} If invalid meta buffer type is provided
+ */
 export function metaBuffer(name, typeOrData, initValue) {
   let buffer
   let bufferType = 'B'
@@ -96,6 +111,11 @@ export function metaBuffer(name, typeOrData, initValue) {
 }
 
 export const MBA = metaBufferArguments
+/**
+ * Create meta buffers from arguments
+ * @param {...any} args - Arguments to create meta buffers
+ * @returns {Array<[string, string, Buffer]>} Array of meta buffer tuples
+ */
 export function metaBufferArguments(...args) {
   let i = 0
   const mba = args.map(
@@ -223,6 +243,11 @@ function flatArray(args) {
   return mainArr.concat(subArr)
 }
 
+/**
+ * Pack data with metadata
+ * @param {...any} args - Data to pack
+ * @returns {Buffer} Packed buffer with metadata
+ */
 export function pack(...args) {
   const bufArr = flatArray(args)
   // console.log('MBP.pack: flat MB or MBA list', bufArr)
@@ -286,6 +311,12 @@ export function pack(...args) {
  * @param {Object} meta *OPTION*  
  * @returns {Object|undefined} success: return Object (include buffer data).   fail: return undefined
  */
+/**
+ * Unpack data from buffer using metadata
+ * @param {Buffer|Uint8Array} binPack - Binary data to unpack
+ * @param {Object} [meta] - Optional metadata object
+ * @returns {Object|undefined} Unpacked data or undefined if failed
+ */
 export function unpack(binPack, meta) {
 
   const infoArr = meta || getMeta(binPack)
@@ -335,6 +366,12 @@ export const U8 = parseUint8Array   //alias
  * @param {Boolean} shareArrayBuffer false(default):  return new( or copied) ArrayBuffer.    true: share the input data's arrayBuffer.
  * @returns {Uint8Array}
  */
+/**
+ * Parse data into Uint8Array
+ * @param {any} data - Data to parse
+ * @param {boolean} [shareArrayBuffer=false] - Whether to share the input data's array buffer
+ * @returns {Uint8Array} Parsed Uint8Array
+ */
 export function parseUint8Array(data, shareArrayBuffer = false) {
   if (data === undefined) throw TypeError('Invalid data type: Undefined')
   if (typeof data === 'string') {
@@ -366,6 +403,12 @@ export function parseUint8Array(data, shareArrayBuffer = false) {
 }
 
 export const B8 = parseBuffer
+/**
+ * Parse data into Buffer
+ * @param {any} data - Data to parse
+ * @param {boolean} [shareArrayBuffer=false] - Whether to share the input data's array buffer
+ * @returns {Buffer} Parsed Buffer
+ */
 export function parseBuffer(data, shareArrayBuffer = false) {
 
   const u8 = parseUint8Array(data, shareArrayBuffer)
@@ -531,6 +574,12 @@ export function getBuffer(binPack) {
  * @param {Buffer|Uint8Array|ArrayBuffer} binPack 
  * @param {Boolean} showDetail add additional item info: full data type name and bytelength.
  * @returns {Object|undefined} success: return MetaInfo Object.   fail: return undefined.(No valid JSON included.)
+ */
+/**
+ * Extract metadata from buffer
+ * @param {Buffer|Uint8Array|ArrayBuffer} binPack - Binary data to extract metadata from
+ * @param {boolean} [showDetail=false] - Whether to show detailed information
+ * @returns {Object|undefined} Metadata object or undefined if no valid JSON included
  */
 export function getMeta(binPack, showDetail = false) {
   if (binPack instanceof ArrayBuffer) {
