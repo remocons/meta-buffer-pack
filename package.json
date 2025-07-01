@@ -33,7 +33,7 @@
   "homepage": "https://remocons.github.io/meta-buffer-pack/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/remocons/meta-buffer-pack.git"
+    "url": "git+https://github.com/remocons/meta-buffer-pack.git"
   },
   "author": {
     "name": "Taeo Lee",
