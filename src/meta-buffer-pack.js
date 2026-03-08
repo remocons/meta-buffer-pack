@@ -61,7 +61,7 @@ export function numberBuffer(type, initValue = 0) {
 export const MB = metaBuffer
 /**
  * Create a meta buffer with name, type, and initial value
- * @param {string} name - Name of the buffer
+ * @param {number|string} name - Name of the buffer
  * @param {number|string|Uint8Array|ArrayBuffer|Object|boolean} typeOrData - Data type or value
  * @param {number|string|undefined} [initValue] - Initial value for numeric types
  * @returns {[string, string, Buffer]} metaBufferTuple containing name, buffer type, and buffer
@@ -306,7 +306,7 @@ export function pack(...args) {
  * You can specify (optional) meta obejct. 
  * (It's useful to read pure buffer data.)
  * 
- * You can get the meta object from:  getFrame(pack) , meta()
+ * You can get the meta object from: meta()
  * @param {Buffer|Uint8Array} binPack binaryData
  * @param {Object} meta *OPTION*  
  * @returns {Object|undefined} success: return Object (include buffer data).   fail: return undefined

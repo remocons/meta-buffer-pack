@@ -31,7 +31,7 @@ export function numberBuffer(type: string, initValue?: number): Buffer;
  * @returns Tuple containing name, buffer type, and buffer
  * @throws TypeError If invalid meta buffer type is provided
  */
-export function metaBuffer(name: string, typeOrData: number | string | Uint8Array | ArrayBuffer | object | boolean, initValue?: number | string): MetaBufferTuple;
+export function metaBuffer(name: number | string, typeOrData: number | string | Uint8Array | ArrayBuffer | object | boolean, initValue?: number | string): MetaBufferTuple;
 
 /**
  * Create meta buffers from arguments
