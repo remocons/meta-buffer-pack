@@ -52,7 +52,7 @@ export function numberBuffer(type, initValue = 0) {
   } else if (type.includes('N')) { // number as string
     buffer = Buffer.from(String(initValue))
   } else {
-    console.log(`invalid type: ${type} or initvalue: ${initValue}`)
+    throw TypeError(`invalid number type: ${type}`)
   }
   return buffer
 }
@@ -193,8 +193,39 @@ export function parseTypeName(type) {
 
 }
 
+// Fixed-width fields may omit length in externally supplied metadata.
+function fieldLength(type, length) {
+  const fullType = parseTypeName(type)
+  const width = /^(u?int)8$/.test(fullType) || fullType === 'boolean' ? 1
+    : /^(u?int)16_/.test(fullType) ? 2
+    : /^(u?int)32_|^float_/.test(fullType) ? 4 : undefined
+  if (length === undefined) length = width
+  if (!Number.isSafeInteger(length) || length < 0 || (width !== undefined && length !== width)) {
+    throw TypeError('invalid field length')
+  }
+  return length
+}
+
+function validMeta(info, size) {
+  if (!Array.isArray(info)) return false
+  try {
+    for (const item of info) {
+      if (!Array.isArray(item) || item.length < 3 || item.length > 5) return false
+      const [name, type, offset, length] = item
+      if (typeof name !== 'string' && !(Number.isSafeInteger(name) && name >= 0)) return false
+      const bytes = fieldLength(type, length)
+      if (!Number.isSafeInteger(offset) || offset < 0 || offset > size || bytes > size - offset) return false
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function readTypedBuffer(simpleType, buffer, offset, length) {
   try {
+    length = fieldLength(simpleType, length)
+    if (!Number.isSafeInteger(offset) || offset < 0 || offset > buffer.byteLength || length > buffer.byteLength - offset) return
     const type = parseTypeName(simpleType)
     if (type == 'int8') return buffer.readInt8(offset)
     else if (type === 'uint8') return buffer.readUint8(offset)
@@ -319,35 +350,35 @@ export function pack(...args) {
  */
 export function unpack(binPack, meta) {
 
-  const infoArr = meta || getMeta(binPack)
-  if (!infoArr) return
+  if (!(binPack instanceof Uint8Array) && !(binPack instanceof ArrayBuffer)) return
+  const externalMeta = meta !== undefined
+  const infoArr = externalMeta ? meta : getMeta(binPack)
+  const dataSize = externalMeta ? binPack.byteLength : binPack.byteLength - readTail(binPack) - TAIL_LEN
+  if (!validMeta(infoArr, dataSize)) return
 
   const buffer = Buffer.from(binPack)
   const binObj = {}
-  let readCounter = 0
-  infoArr.forEach(bufPack => {
-    const [name, type, offset, length] = bufPack
-    let result = readTypedBuffer(type, buffer, offset, length)
-    if (result == undefined) return
-    binObj[name] = result
-    if (length) readCounter += length
-  })
+  let readEnd = 0
+  for (const [name, type, offset, length] of infoArr) {
+    const bytes = fieldLength(type, length)
+    const result = readTypedBuffer(type, buffer, offset, bytes)
+    if (result === undefined) return
+    // Preserve arbitrary field names without invoking Object.prototype setters.
+    Object.defineProperty(binObj, name, {
+      value: result, enumerable: true, writable: true, configurable: true
+    })
+    readEnd = Math.max(readEnd, offset + bytes)
+  }
 
-  // Can not define meta for variable size buffer 
-  // unpacker support automatic property to read left(did't read) buffers.
-  // console.log("######, unpack: buffer " , readCounter, buffer ,buffer.byteLength)
-  if (meta && buffer.byteLength !== readCounter) {
-    let leftSize = buffer.byteLength - readCounter
-    // console.log('total,left buffer size', buffer.byteLength, leftSize )
-    let result = readTypedBuffer('b', buffer, readCounter, leftSize)
-    if (result == undefined) return
-    binObj["$OTHERS"] = result
+  // $OTHERS is the trailing data after the last declared field.
+  if (externalMeta && readEnd < buffer.byteLength) {
+    binObj.$OTHERS = buffer.subarray(readEnd)
   }
 
   // set args with values if exist.
   let mbaIndex = 0;
   let args = [];
-  while (binObj[mbaIndex]) {
+  while (Object.prototype.hasOwnProperty.call(binObj, mbaIndex)) {
     args.push(binObj[mbaIndex++])
   }
 
@@ -472,28 +503,18 @@ export function getBufferSize(binPack) {
 }
 
 // MB and MBA 
-export function parseMetaInfo(binPack, infoSize) {
-  let info;
+export function parseMetaInfo(binPack, infoSize = readTail(binPack)) {
   try {
+    if (binPack instanceof ArrayBuffer) binPack = Buffer.from(binPack)
+    if (!(binPack instanceof Uint8Array)) return
+    if (!Number.isSafeInteger(infoSize) || infoSize <= 0 || infoSize > binPack.byteLength - TAIL_LEN) return
     const buffer = new Uint8Array(binPack.buffer, binPack.byteOffset, binPack.byteLength)
-    const infoFrom = buffer.byteLength - infoSize - 2
-    const infoEncoded = buffer.subarray(infoFrom, buffer.byteLength - 2)
-    const decoded = decoder.decode(infoEncoded)
-    const info = JSON.parse(decoded)
-
-    if (!Array.isArray(info) || !Array.isArray(info[0])) return
-
-    let firstItem = info[0]
-    if (!firstItem) return
-
-    if (firstItem.length < 3) return
-    const [name, type, offset] = firstItem
-
-    if (typeof type !== 'string' || typeof offset !== 'number') return
-
+    const infoFrom = buffer.byteLength - infoSize - TAIL_LEN
+    const info = JSON.parse(decoder.decode(buffer.subarray(infoFrom, buffer.byteLength - TAIL_LEN)))
+    if (!validMeta(info, infoFrom) || info.length === 0) return
     return info
-  } catch (error) {
-    // return undefined
+  } catch {
+    return undefined
   }
 }
 

@@ -42,7 +42,7 @@ describe('parseMetaInfo', function () {
   describe('Valid Meta', function () {
     describe('has element. first,second :string, 3rd: number ', function () {
       it('should return object', function () {
-        let jsonStr = '[["","",3]]'
+        let jsonStr = '[["empty","B",0,0]]'
         let jsonBuffer = MBP.B8( jsonStr )
         let pack = MBP.pack( MBP.MB('#json', jsonBuffer ) , MBP.MB('','16', jsonBuffer.byteLength ) )
         assert.ok( typeof MBP.parseMetaInfo(pack ) === 'object')

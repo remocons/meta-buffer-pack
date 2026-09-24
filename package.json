@@ -1,11 +1,17 @@
 {
   "name": "meta-buffer-pack",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Master Binary Data Serialization & Deserialization with Metadata.",
   "type": "module",
   "exports": {
-    "import": "./dist/meta-buffer-pack.js",
-    "require": "./dist/meta-buffer-pack.cjs"
+    "import": {
+      "types": "./dist/meta-buffer-pack.d.ts",
+      "default": "./dist/meta-buffer-pack.js"
+    },
+    "require": {
+      "types": "./dist/meta-buffer-pack.d.cts",
+      "default": "./dist/meta-buffer-pack.cjs"
+    }
   },
   "browser": "./dist/meta-buffer-pack.min.js",
   "jsdelivr": "./dist/meta-buffer-pack.min.js",
@@ -21,7 +27,8 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "test": "node --test"
+    "test": "node --test",
+    "test:types": "tsc -p test/types/tsconfig.json"
   },
   "keywords": [
     "buffer",
