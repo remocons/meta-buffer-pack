@@ -1,5 +1,7 @@
 # Meta Buffer Pack (MBP)
 
+[English](README.md) | [한국어](README.ko.md)
+
 Meta Buffer Pack is a JavaScript library that combines binary data with metadata describing each field's name, type, offset, and length. It can restore a packed buffer as an object, or separate the raw bytes from their metadata.
 
 Use it to bundle binary payloads with attributes, exchange application-specific messages, or build simple binary layouts with explicit integer sizes and byte order. MBP provides serialization utilities; transport, message framing, compression, and encryption are outside its scope.
